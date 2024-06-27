@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "104706679185",
+    "project_id": "persifolio-36d43",
+    "storage_bucket": "persifolio-36d43.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:104706679185:android:2ba757904394b3efc37a30",
+        "android_client_info": {
+          "package_name": "com.persifolio.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "104706679185-iid0v06dd05lm1p7ijt05vgkp97uh5q6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.persifolio.app",
+            "certificate_hash": "16473b76c39df491dd0c6d2a38bdb3e0351c5a16"
+          }
+        },
+        {
+          "client_id": "104706679185-ro8kbu1t00lvt0roh5i2u1js4f7ltab7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAD5DXK96vi4TwPS95a_uepV1rVtV_wsiE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "104706679185-ro8kbu1t00lvt0roh5i2u1js4f7ltab7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "104706679185-pfgp0p228ehre9qo62a9hk3tqcodavlb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.inevestmentApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
