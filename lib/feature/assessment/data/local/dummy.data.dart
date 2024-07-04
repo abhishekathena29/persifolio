@@ -8,6 +8,8 @@ List<Assessment> onboarding = [
 
 List<Question> timeHorizon = [
   Question(
+    questionNo: 1,
+    heading: 'Time Horizon',
     title: 'What is your age?',
     options: [
       Option(option: '56 and over', score: 1),
@@ -17,6 +19,8 @@ List<Question> timeHorizon = [
     ],
   ),
   Question(
+    questionNo: 2,
+    heading: 'Time Horizon',
     title: 'What is your primary financial goal?',
     options: [
       Option(option: 'Wealth preservation', score: 1),
@@ -25,6 +29,8 @@ List<Question> timeHorizon = [
     ],
   ),
   Question(
+    questionNo: 3,
+    heading: 'Time Horizon',
     title: 'What is the time frame for you to achieve your financial goals?',
     options: [
       Option(option: '0-5 years', score: 1),
@@ -36,6 +42,8 @@ List<Question> timeHorizon = [
 
 List<Question> financialGoals = [
   Question(
+    questionNo: 4,
+    heading: 'Financial Goals',
     title: 'Which of the following best describes your financial goals?',
     options: [
       Option(
@@ -53,6 +61,8 @@ List<Question> financialGoals = [
     ],
   ),
   Question(
+    questionNo: 5,
+    heading: 'Financial Goals',
     title:
         'How do you expect your standard of living five years from now to compare to your standard of living today?',
     options: [

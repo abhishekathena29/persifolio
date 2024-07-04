@@ -23,25 +23,33 @@ class Assessment {
 }
 
 class Question {
+  String heading;
   String title;
   List<Option> options;
+  int questionNo;
   Question({
+    required this.heading,
     required this.title,
     required this.options,
+    required this.questionNo,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'title': title,
       'options': options.map((x) => x.toMap()).toList(),
+      'questionNo': questionNo,
+      'heading': heading
     };
   }
 
   factory Question.fromMap(Map<String, dynamic> map) {
     return Question(
-      title: map['title'] ?? '',
-      options: List<Option>.from(map['options']?.map((x) => Option.fromMap(x))),
-    );
+        heading: map['heading'] ?? '',
+        title: map['title'] ?? '',
+        options:
+            List<Option>.from(map['options']?.map((x) => Option.fromMap(x))),
+        questionNo: map['questionNo'] ?? 0);
   }
 }
 

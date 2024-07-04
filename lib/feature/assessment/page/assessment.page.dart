@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:persifolio/feature/assessment/data/local/dummy.data.dart';
+import 'package:persifolio/feature/assessment/page/financial_goals.dart';
 import 'package:persifolio/feature/assessment/page/time_horizon.dart';
 
 class AssessmentPage extends StatefulWidget {
@@ -15,6 +15,7 @@ class _AssessmentPageState extends State<AssessmentPage> {
     return PageView(
       children: [
         TimeHorizonAssessment(),
+        FinancialGoals(),
       ],
     );
   }
