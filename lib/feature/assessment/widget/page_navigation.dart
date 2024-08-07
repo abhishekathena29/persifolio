@@ -35,14 +35,20 @@ class QuestionNavigationButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            if (!right)
+              Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+              ),
             Text(
               right ? "Next " : "Back ",
               style: const TextStyle(color: Colors.white, fontSize: 20),
             ),
-            Icon(
-              right ? Icons.arrow_forward : Icons.arrow_back,
-              color: Colors.white,
-            ),
+            if (right)
+              Icon(
+                Icons.arrow_forward,
+                color: Colors.white,
+              ),
           ],
         ),
       ),

@@ -26,75 +26,108 @@ class _AssessmentPageState extends State<AssessmentPage> {
     super.initState();
   }
 
+  bool isLoading = false;
   getQuestionFirebase() async {
+    setState(() {
+      isLoading = true;
+    });
     var ques = await FirebaseFirestore.instance
         .collection('assessment')
         .orderBy('questionNo')
         .get();
     questionList =
         ques.docs.map((element) => Question.fromMap(element.data())).toList();
-    setState(() {});
+    setState(() {
+      isLoading = false;
+    });
   }
 
-  int totalScore = 0;
   Map<int, int> mp = {};
   bool isLast = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          mp.forEach((u, v) {
-            totalScore += v;
-          });
-          print(isLast);
-        },
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
-        child: Column(
-          children: [
-            Expanded(
-              child: PageView.builder(
-                controller: controller,
-                // physics: const NeverScrollableScrollPhysics(),
-                itemCount: questionList.length,
-                itemBuilder: (context, index) {
-                  if (index == questionList.length - 1) {
-                    isLast = true;
-                  }
-                  var question = questionList[index];
-                  int score = 0;
-                  return QuestionPage(
-                    controller: controller,
-                    question: question,
-                    changeScore: (val) {
-                      score = val;
-                      mp[question.questionNo] = score * question.questionType;
-                    },
-                  );
-                },
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     mp.forEach((u, v) {
+      //       totalScore += v;
+      //     });
+      //     print(isLast);
+      //   },
+      // ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: PageView.builder(
+                      controller: controller,
+                      // physics: const NeverScrollableScrollPhysics(),
+                      onPageChanged: (index) {
+                        if (index == questionList.length - 1) {
+                          isLast = true;
+                        } else {
+                          isLast = false;
+                        }
+                        setState(() {});
+                      },
+                      itemCount: questionList.length,
+                      itemBuilder: (context, index) {
+                        // if (index == questionList.length - 1) {
+                        //   isLast = true;
+                        // }
+                        var question = questionList[index];
+                        // int score = 0;
+                        return QuestionPage(
+                          controller: controller,
+                          question: question,
+                          changeScore: (val) {
+                            // score = val;
+                            mp[question.questionNo] =
+                                val * question.questionType;
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      QuestionNavigationButton(
+                        controller: controller,
+                        right: false,
+                      ),
+                      // if (!isLast)
+                      if (!isLast)
+                        QuestionNavigationButton(
+                          controller: controller,
+                          right: true,
+                        )
+                      else
+                        ElevatedButton(
+                          onPressed: () {
+                            int totalScore = 0;
+                            mp.forEach((u, v) {
+                              totalScore += v;
+                              // print(u.toString() + " " + v.toString());
+                            });
+                            // print(totalScore);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ScoringPage(score: totalScore)));
+                          },
+                          child: const Text("Submit"),
+                        )
+                    ],
+                  ),
+                ],
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                QuestionNavigationButton(
-                  controller: controller,
-                  right: false,
-                ),
-                QuestionNavigationButton(
-                  controller: controller,
-                  right: true,
-                ),
-                if (isLast)
-                  ElevatedButton(onPressed: () {}, child: const Text("Submit"))
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

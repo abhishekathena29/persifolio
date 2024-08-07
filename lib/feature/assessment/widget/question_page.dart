@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../scoring/scoring_page.dart';
 import '../data/models/assessment.model.dart';
 
 class QuestionPage extends StatefulWidget {
@@ -32,7 +31,7 @@ class _QuestionPageState extends State<QuestionPage>
         const SizedBox(height: 50),
         Text(
           "Question: ${widget.question.questionNo}",
-          style: const TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 10),
         Text(
@@ -64,14 +63,6 @@ class _QuestionPageState extends State<QuestionPage>
             ),
           ),
         ),
-        if (widget.question.questionNo == 15)
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ScoringPage()));
-            },
-            child: const Text('Submit'),
-          )
       ],
     );
   }
