@@ -8,6 +8,7 @@ class StockPortfolioModel {
   double diversification;
   String where;
   String companyName;
+  String companyAbout;
   Timestamp addedDate;
   StockPortfolioModel({
     required this.portfolioName,
@@ -15,6 +16,7 @@ class StockPortfolioModel {
     required this.diversification,
     required this.where,
     required this.companyName,
+    required this.companyAbout,
     required this.addedDate,
   });
 
@@ -25,6 +27,7 @@ class StockPortfolioModel {
       'diversification': diversification,
       'where': where,
       'companyName': companyName,
+      'companyAbout': companyAbout,
       'addedDate': addedDate,
     };
   }
@@ -36,6 +39,7 @@ class StockPortfolioModel {
       diversification: map['diversification']?.toDouble() ?? 0.0,
       where: map['where'] ?? '',
       companyName: map['companyName'] ?? '',
+      companyAbout: map['companyAbout'] ?? '',
       addedDate: map['addedDate'],
     );
   }

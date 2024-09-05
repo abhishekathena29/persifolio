@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persifolio/feature/auth/presentation/login.page.dart';
 import 'package:persifolio/feature/home/presentation/home.page.dart';
+import 'package:persifolio/feature/scoring/scoring_page.dart';
 import 'package:persifolio/firebase_options.dart';
 
 Future<void> main() async {
@@ -10,6 +11,12 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
+
+String b = "Aggressive Growth";
+String c = "Income with Capital Preservation";
+String d = "Income with Moderate Growth";
+String e = "Growth with Income";
+String f = "Growth";
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -23,11 +30,12 @@ class MyApp extends StatelessWidget {
         builder: (context, child) {
           return MaterialApp(
             title: 'Persifolio',
+            debugShowCheckedModeBanner: false,
             theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
               useMaterial3: true,
             ),
-            home: Loginpage(),
+            home: ScoringPage(score: 100),
           );
         });
   }

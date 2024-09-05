@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persifolio/feature/home/presentation/home.page.dart';
+import 'package:persifolio/feature/scoring/score_info_page.dart';
 
 class ScoringPage extends StatelessWidget {
   const ScoringPage({super.key, required this.score});
@@ -15,6 +16,7 @@ class ScoringPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const Spacer(),
               Card(
                 child: Padding(
                   padding:
@@ -48,7 +50,8 @@ class ScoringPage extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 30.h),
+              SizedBox(height: 20.h),
+              SizedBox(height: 20.h),
               ElevatedButton(
                 onPressed: () {
                   String b = "";
@@ -63,12 +66,13 @@ class ScoringPage extends StatelessWidget {
                   } else if (score >= 115 && score <= 125) {
                     b = "Aggressive Growth";
                   }
-
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              HomePage(portfolioScoreName: b)));
+                  if (b.isNotEmpty) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                HomePage(portfolioScoreName: b)));
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xff38A07D),
@@ -82,7 +86,21 @@ class ScoringPage extends StatelessWidget {
                     style: TextStyle(fontSize: 18.sp, color: Colors.white),
                   ),
                 ),
-              )
+              ),
+              Spacer(),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const InvestorScoreInfoScreen()));
+                },
+                child: const Text(
+                  'How are we calculating the score?',
+                  style: TextStyle(color: Colors.blue),
+                ),
+              ),
             ],
           ),
         ),
