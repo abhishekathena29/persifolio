@@ -1,0 +1,2 @@
+C:/Users/anpap/Desktop/athena/persifolio/android/app/.cxx/Debug/w43411t2/x86/CMakeFiles/edit_cache.dir
+C:/Users/anpap/Desktop/athena/persifolio/android/app/.cxx/Debug/w43411t2/x86/CMakeFiles/rebuild_cache.dir

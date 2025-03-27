@@ -1,0 +1,2 @@
+C:/Users/anpap/Desktop/athena/persifolio/android/app/.cxx/Debug/w43411t2/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/anpap/Desktop/athena/persifolio/android/app/.cxx/Debug/w43411t2/armeabi-v7a/CMakeFiles/rebuild_cache.dir
