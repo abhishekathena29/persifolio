@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persifolio/feature/home/model/stock_portfolio_model.dart';
+import 'package:persifolio/feature/simulation/pages/simulation_home.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.portfolioScoreName});
@@ -289,59 +290,60 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) => Dialog(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20, top: 30, bottom: 20, right: 20),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Text(
-                                        'Type the value to invest',
-                                        style: TextStyle(fontSize: 18),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) => Dialog(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 20, top: 30, bottom: 20, right: 20),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Text(
+                                            'Type the value to invest',
+                                            style: TextStyle(fontSize: 18),
+                                          ),
+                                          const SizedBox(height: 15),
+                                          TextField(
+                                            controller: amountController,
+                                            keyboardType: TextInputType.number,
+                                            decoration: const InputDecoration(
+                                                hintText: 'Value'),
+                                          ),
+                                          const SizedBox(height: 15),
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              amount =
+                                                  int.parse(amountController.text);
+                                              setState(() {});
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text('Submit'),
+                                          ),
+                                        ],
                                       ),
-                                      const SizedBox(height: 15),
-                                      TextField(
-                                        controller: amountController,
-                                        keyboardType: TextInputType.number,
-                                        decoration: const InputDecoration(
-                                            hintText: 'Value'),
-                                      ),
-                                      const SizedBox(height: 15),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          amount =
-                                              int.parse(amountController.text);
-                                          setState(() {});
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text('Submit'),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ));
-                      // showDialog(context: context, builder: (context)=>Material(child: ,))
-                      // showModalBottomSheet(
-                      //   context: context,
-                      //   builder: (context) => Container(
-                      //     child: Column(
-                      //       children: [
-                      //         Text('Type the value to invest'),
-                      //         TextField(
-                      //           keyboardType: TextInputType.number,
-                      //           decoration: InputDecoration(hintText: 'Value'),
-                      //         )
-                      //       ],
-                      //     ),
-                      //   ),
-                      // );
-                    },
-                    icon: const Icon(Icons.add),
+                                    ),
+                                  ));
+                        },
+                        icon: const Icon(Icons.attach_money),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SimulationHomePage(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.trending_up),
+                        tooltip: 'Stock Simulator',
+                      ),
+                    ],
                   ),
                 ],
               ),
