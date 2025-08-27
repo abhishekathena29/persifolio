@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persifolio/feature/home/presentation/home.page.dart';
 import 'package:persifolio/feature/scoring/score_info_page.dart';
 
@@ -11,96 +10,186 @@ class ScoringPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF0F0F0F),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1A1A1A),
+        elevation: 0,
+        title: const Text(
+          'Assessment Complete',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        leading: Container(
+          margin: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1A1A1A),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: IconButton(
+                         icon: const Icon(Icons.arrow_back, color: Color(0xFF4CAF50)),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
+      ),
       body: SafeArea(
-        child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Spacer(),
-              Card(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-                  child: Text(
-                    'Your Final Score is',
+              
+              // Score Card
+              Container(
+                padding: const EdgeInsets.all(32),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1A1A1A),
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF4CAF50).withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                                               child: const Icon(
+                           Icons.emoji_events,
+                           color: Color(0xFF4CAF50),
+                        size: 48,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    const Text(
+                      'Your Final Score is',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      score.toString(),
+                      style: const TextStyle(
+                        fontSize: 72,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF4CAF50),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
+              const SizedBox(height: 40),
+              
+              // Description
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1A1A1A),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.grey.shade800),
+                ),
+                child: const Text(
+                  'Explore your portfolio according to the Score',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                    height: 1.4,
+                  ),
+                ),
+              ),
+              
+              const SizedBox(height: 40),
+              
+              // Continue Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    String portfolioType = "";
+                    if (score >= 34 && score <= 57) {
+                      portfolioType = "Income with Capital Preservation";
+                    } else if (score >= 58 && score <= 83) {
+                      portfolioType = "Income with Moderate Growth";
+                    } else if (score >= 84 && score <= 99) {
+                      portfolioType = "Growth with Income";
+                    } else if (score >= 100 && score <= 114) {
+                      portfolioType = "Growth";
+                    } else if (score >= 115 && score <= 125) {
+                      portfolioType = "Aggressive Growth";
+                    }
+                    if (portfolioType.isNotEmpty) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomePage(portfolioScoreName: portfolioType),
+                        ),
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4CAF50),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    'Continue to Portfolio',
                     style: TextStyle(
-                      fontSize: 30.sp,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 20.h),
-              Text(
-                score.toString(),
-                style: const TextStyle(
-                  fontSize: 80,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 60.h),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Text(
-                  'Explore your portfolio according to the Score',
-                  textAlign: TextAlign.center,
+              
+              const SizedBox(height: 20),
+              
+              // Info Button
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const InvestorScoreInfoScreen(),
+                    ),
+                  );
+                },
+                child: const Text(
+                  'How are we calculating the score?',
                   style: TextStyle(
-                    fontSize: 25,
+                    color: Color(0xFF4CAF50),
+                    fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
-              SizedBox(height: 20.h),
-              SizedBox(height: 20.h),
-              ElevatedButton(
-                onPressed: () {
-                  String b = "";
-                  if (score >= 34 && score <= 57) {
-                    b = "Income with Capital Preservation";
-                  } else if (score >= 58 && score <= 83) {
-                    b = "Income with Moderate Growth";
-                  } else if (score >= 84 && score <= 99) {
-                    b = "Growth with Income";
-                  } else if (score >= 100 && score <= 114) {
-                    b = "Growth";
-                  } else if (score >= 115 && score <= 125) {
-                    b = "Aggressive Growth";
-                  }
-                  if (b.isNotEmpty) {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                HomePage(portfolioScoreName: b)));
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff38A07D),
-                  shadowColor: const Color.fromARGB(255, 41, 117, 92),
-                ),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-                  child: Text(
-                    'Continue',
-                    style: TextStyle(fontSize: 18.sp, color: Colors.white),
-                  ),
-                ),
-              ),
-              Spacer(),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              const InvestorScoreInfoScreen()));
-                },
-                child: const Text(
-                  'How are we calculating the score?',
-                  style: TextStyle(color: Colors.blue),
-                ),
-              ),
+              
+              const Spacer(),
             ],
           ),
         ),

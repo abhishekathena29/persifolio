@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AlphaVantageService {
-  static const String _apiKey = '2Z8MQG671VG6C7TZ';
+  static const String _apiKey = 'VW82C6YRO1S60RQI';
   static const String _baseUrl = 'https://www.alphavantage.co/query';
 
   // Popular NSE stocks

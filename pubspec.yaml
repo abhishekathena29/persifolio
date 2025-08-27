@@ -42,7 +42,7 @@ dependencies:
   google_sign_in: 
   cloud_firestore:
   cached_network_image: 
-  fl_chart: 
+  # fl_chart: 
   provider: 
   http: 
   shared_preferences: 

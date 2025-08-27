@@ -1,55 +1,53 @@
 import 'package:flutter/material.dart';
 
 class QuestionNavigationButton extends StatelessWidget {
+  final PageController controller;
+  final bool right;
+
   const QuestionNavigationButton({
     super.key,
     required this.controller,
     required this.right,
   });
 
-  final PageController controller;
-  final bool right;
-
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (right) {
-          controller.nextPage(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.linear,
-          );
-        } else {
-          controller.previousPage(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.linear,
-          );
-        }
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-        decoration: BoxDecoration(
-          color: const Color(0xff38A07D),
-          borderRadius: BorderRadius.circular(10),
+    return Container(
+             decoration: BoxDecoration(
+         color: const Color(0xFF4CAF50),
+         borderRadius: BorderRadius.circular(16),
+         boxShadow: [
+           BoxShadow(
+             color: const Color(0xFF4CAF50).withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: IconButton(
+        onPressed: () {
+          if (right) {
+            controller.nextPage(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          } else {
+            controller.previousPage(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          }
+        },
+        icon: Icon(
+          right ? Icons.arrow_forward : Icons.arrow_back,
+          color: Colors.white,
+          size: 24,
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (!right)
-              Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-              ),
-            Text(
-              right ? "Next " : "Back ",
-              style: const TextStyle(color: Colors.white, fontSize: 20),
-            ),
-            if (right)
-              Icon(
-                Icons.arrow_forward,
-                color: Colors.white,
-              ),
-          ],
+        style: IconButton.styleFrom(
+          padding: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
         ),
       ),
     );
