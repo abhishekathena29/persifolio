@@ -5,35 +5,62 @@ class AlphaVantageService {
   static const String _apiKey = 'VW82C6YRO1S60RQI';
   static const String _baseUrl = 'https://www.alphavantage.co/query';
 
-  // Popular NSE stocks
-  static const List<String> _nseStocks = [
-    'RELIANCE.NSE', 'TCS.NSE', 'HDFCBANK.NSE', 'INFY.NSE', 'ICICIBANK.NSE',
-    'HINDUNILVR.NSE', 'ITC.NSE', 'SBIN.NSE', 'BHARTIARTL.NSE', 'KOTAKBANK.NSE',
-    'AXISBANK.NSE', 'ASIANPAINT.NSE', 'MARUTI.NSE', 'HCLTECH.NSE', 'SUNPHARMA.NSE',
-    'WIPRO.NSE', 'ULTRACEMCO.NSE', 'TITAN.NSE', 'BAJFINANCE.NSE', 'NESTLEIND.NSE'
+  // Popular BSE stocks (using .BSE suffix for Alpha Vantage API)
+  static const List<String> _bseStocks = [
+    'RELIANCE.BSE',
+    'TCS.BSE',
+    'HDFCBANK.BSE',
+    'INFY.BSE',
+    'ICICIBANK.BSE',
+    'HINDUNILVR.BSE',
+    'ITC.BSE',
+    'SBIN.BSE',
+    'BHARTIARTL.BSE',
+    'KOTAKBANK.BSE',
+    'AXISBANK.BSE',
+    'ASIANPAINT.BSE',
+    'MARUTI.BSE',
+    'HCLTECH.BSE',
+    'SUNPHARMA.BSE',
+    'WIPRO.BSE',
+    'ULTRACEMCO.BSE',
+    'TITAN.BSE',
+    'BAJFINANCE.BSE',
+    'NESTLEIND.BSE'
   ];
 
   static Future<Map<String, dynamic>> getStockQuote(String symbol) async {
     try {
       final response = await http.get(
-        Uri.parse('$_baseUrl?function=GLOBAL_QUOTE&symbol=$symbol&apikey=$_apiKey'),
+        Uri.parse(
+            '$_baseUrl?function=GLOBAL_QUOTE&symbol=$symbol&apikey=$_apiKey'),
       );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+
+        // Check for rate limit message
+        if (data['Note'] != null) {
+          throw Exception('API rate limit exceeded: ${data['Note']}');
+        }
+
         if (data['Global Quote'] != null) {
           final quote = data['Global Quote'];
           return {
             'symbol': quote['01. symbol'] ?? symbol,
             'price': double.tryParse(quote['05. price'] ?? '0') ?? 0.0,
             'change': double.tryParse(quote['09. change'] ?? '0') ?? 0.0,
-            'changePercent': double.tryParse(quote['10. change percent']?.replaceAll('%', '') ?? '0') ?? 0.0,
+            'changePercent': double.tryParse(
+                    quote['10. change percent']?.replaceAll('%', '') ?? '0') ??
+                0.0,
             'volume': int.tryParse(quote['06. volume'] ?? '0') ?? 0,
-            'previousClose': double.tryParse(quote['08. previous close'] ?? '0') ?? 0.0,
+            'previousClose':
+                double.tryParse(quote['08. previous close'] ?? '0') ?? 0.0,
             'open': double.tryParse(quote['02. open'] ?? '0') ?? 0.0,
             'high': double.tryParse(quote['03. high'] ?? '0') ?? 0.0,
             'low': double.tryParse(quote['04. low'] ?? '0') ?? 0.0,
-            'isPositive': (double.tryParse(quote['09. change'] ?? '0') ?? 0.0) >= 0,
+            'isPositive':
+                (double.tryParse(quote['09. change'] ?? '0') ?? 0.0) >= 0,
           };
         }
       }
@@ -43,10 +70,10 @@ class AlphaVantageService {
     }
   }
 
-  static Future<List<Map<String, dynamic>>> getTopNSEStocks() async {
+  static Future<List<Map<String, dynamic>>> getTopBSEStocks() async {
     List<Map<String, dynamic>> stocks = [];
-    
-    for (String symbol in _nseStocks.take(10)) {
+
+    for (String symbol in _bseStocks.take(10)) {
       try {
         final stockData = await getStockQuote(symbol);
         stocks.add({
@@ -59,14 +86,15 @@ class AlphaVantageService {
         print('Error fetching $symbol: $e');
       }
     }
-    
+
     return stocks;
   }
 
   static Future<Map<String, dynamic>> getStockIntraday(String symbol) async {
     try {
       final response = await http.get(
-        Uri.parse('$_baseUrl?function=TIME_SERIES_INTRADAY&symbol=$symbol&interval=5min&apikey=$_apiKey'),
+        Uri.parse(
+            '$_baseUrl?function=TIME_SERIES_INTRADAY&symbol=$symbol&interval=5min&apikey=$_apiKey'),
       );
 
       if (response.statusCode == 200) {
@@ -74,7 +102,7 @@ class AlphaVantageService {
         if (data['Time Series (5min)'] != null) {
           final timeSeries = data['Time Series (5min)'];
           final entries = timeSeries.entries.toList();
-          
+
           List<Map<String, dynamic>> chartData = [];
           for (var entry in entries.take(20)) {
             final values = entry.value as Map<String, dynamic>;
@@ -83,7 +111,7 @@ class AlphaVantageService {
               'price': double.tryParse(values['4. close'] ?? '0') ?? 0.0,
             });
           }
-          
+
           return {
             'symbol': symbol,
             'chartData': chartData.reversed.toList(),
@@ -96,11 +124,13 @@ class AlphaVantageService {
     }
   }
 
-  static Future<List<Map<String, dynamic>>> searchSymbols(String keywords) async {
+  static Future<List<Map<String, dynamic>>> searchSymbols(
+      String keywords) async {
     if (keywords.trim().isEmpty) return [];
     try {
       final response = await http.get(
-        Uri.parse('$_baseUrl?function=SYMBOL_SEARCH&keywords=$keywords&apikey=$_apiKey'),
+        Uri.parse(
+            '$_baseUrl?function=SYMBOL_SEARCH&keywords=$keywords&apikey=$_apiKey'),
       );
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -114,8 +144,9 @@ class AlphaVantageService {
           final region = (map['4. region'] as String? ?? '').trim();
           final currency = (map['8. currency'] as String? ?? '').trim();
 
-          final isIndia = region.toLowerCase().contains('india') || currency.toUpperCase() == 'INR';
-          final isNseOrBse = symbol.endsWith('.BSE') || symbol.endsWith('.NSE');
+          final isIndia = region.toLowerCase().contains('india') ||
+              currency.toUpperCase() == 'INR';
+          final isNseOrBse = symbol.endsWith('.BSE');
           if (!isIndia && !isNseOrBse) continue;
 
           results.add({
@@ -136,28 +167,28 @@ class AlphaVantageService {
 
   static String getStockName(String symbol) {
     final names = {
-      'RELIANCE.NSE': 'Reliance Industries Ltd',
-      'TCS.NSE': 'Tata Consultancy Services Ltd',
-      'HDFCBANK.NSE': 'HDFC Bank Ltd',
-      'INFY.NSE': 'Infosys Ltd',
-      'ICICIBANK.NSE': 'ICICI Bank Ltd',
-      'HINDUNILVR.NSE': 'Hindustan Unilever Ltd',
-      'ITC.NSE': 'ITC Ltd',
-      'SBIN.NSE': 'State Bank of India',
-      'BHARTIARTL.NSE': 'Bharti Airtel Ltd',
-      'KOTAKBANK.NSE': 'Kotak Mahindra Bank Ltd',
-      'AXISBANK.NSE': 'Axis Bank Ltd',
-      'ASIANPAINT.NSE': 'Asian Paints Ltd',
-      'MARUTI.NSE': 'Maruti Suzuki India Ltd',
-      'HCLTECH.NSE': 'HCL Technologies Ltd',
-      'SUNPHARMA.NSE': 'Sun Pharmaceutical Industries Ltd',
-      'WIPRO.NSE': 'Wipro Ltd',
-      'ULTRACEMCO.NSE': 'UltraTech Cement Ltd',
-      'TITAN.NSE': 'Titan Company Ltd',
-      'BAJFINANCE.NSE': 'Bajaj Finance Ltd',
-      'NESTLEIND.NSE': 'Nestle India Ltd',
+      'RELIANCE.BSE': 'Reliance Industries Ltd',
+      'TCS.BSE': 'Tata Consultancy Services Ltd',
+      'HDFCBANK.BSE': 'HDFC Bank Ltd',
+      'INFY.BSE': 'Infosys Ltd',
+      'ICICIBANK.BSE': 'ICICI Bank Ltd',
+      'HINDUNILVR.BSE': 'Hindustan Unilever Ltd',
+      'ITC.BSE': 'ITC Ltd',
+      'SBIN.BSE': 'State Bank of India',
+      'BHARTIARTL.BSE': 'Bharti Airtel Ltd',
+      'KOTAKBANK.BSE': 'Kotak Mahindra Bank Ltd',
+      'AXISBANK.BSE': 'Axis Bank Ltd',
+      'ASIANPAINT.BSE': 'Asian Paints Ltd',
+      'MARUTI.BSE': 'Maruti Suzuki India Ltd',
+      'HCLTECH.BSE': 'HCL Technologies Ltd',
+      'SUNPHARMA.BSE': 'Sun Pharmaceutical Industries Ltd',
+      'WIPRO.BSE': 'Wipro Ltd',
+      'ULTRACEMCO.BSE': 'UltraTech Cement Ltd',
+      'TITAN.BSE': 'Titan Company Ltd',
+      'BAJFINANCE.BSE': 'Bajaj Finance Ltd',
+      'NESTLEIND.BSE': 'Nestle India Ltd',
     };
 
-    return names[symbol] ?? symbol.replaceAll('.NSE', '');
+    return names[symbol] ?? symbol.replaceAll('.BSE', '');
   }
 }

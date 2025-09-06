@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:persifolio/feature/simulation/pages/simulation_home.dart';
 import 'package:persifolio/firebase_options.dart';
 import 'package:persifolio/feature/auth/presentation/login.page.dart';
 
@@ -52,7 +51,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -75,7 +74,8 @@ class MyApp extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             borderSide: const BorderSide(color: Color(0xFF4CAF50), width: 2),
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           hintStyle: TextStyle(color: Colors.grey.shade500),
           labelStyle: const TextStyle(color: Colors.grey),
         ),
@@ -137,9 +137,10 @@ class MyApp extends StatelessWidget {
           type: BottomNavigationBarType.fixed,
           elevation: 0,
         ),
-        dialogTheme: DialogTheme(
+        dialogTheme: DialogThemeData(
           backgroundColor: const Color(0xFF1A1A1A),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           titleTextStyle: const TextStyle(
             color: Colors.white,
             fontSize: 20,
@@ -157,7 +158,8 @@ class MyApp extends StatelessWidget {
           backgroundColor: const Color(0xFF1A1A1A),
           selectedColor: const Color(0xFF4CAF50),
           labelStyle: const TextStyle(color: Colors.white),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
         radioTheme: RadioThemeData(
           fillColor: MaterialStateProperty.resolveWith((states) {
@@ -205,7 +207,11 @@ class MyApp extends StatelessWidget {
           foregroundColor: Colors.white,
         ),
       ),
-      home: const SimulationHomePage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const Loginpage(),
+        '/login': (context) => const Loginpage(),
+      },
     );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:persifolio/feature/assessment/page/assessment.page.dart';
+import 'package:persifolio/feature/bottom_navigation/bottom_navigation.dart';
 
 class Loginpage extends StatefulWidget {
   const Loginpage({super.key});
@@ -23,7 +23,8 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
-    _slideAnimation = Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
     );
     _animationController.forward();
@@ -50,7 +51,7 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: 60),
-                  
+
                   // Logo and Title
                   Container(
                     padding: const EdgeInsets.all(32),
@@ -99,9 +100,9 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                       ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: 40),
-                  
+
                   // Features Section
                   Container(
                     padding: const EdgeInsets.all(24),
@@ -137,12 +138,13 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                           ),
                         ),
                         const SizedBox(height: 32),
-                        
+
                         // Features List
                         _buildFeatureItem(
                           icon: Icons.psychology,
                           title: 'AI-Powered Assessment',
-                          subtitle: 'Get personalized portfolio recommendations',
+                          subtitle:
+                              'Get personalized portfolio recommendations',
                         ),
                         const SizedBox(height: 20),
                         _buildFeatureItem(
@@ -159,9 +161,9 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                       ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: 40),
-                  
+
                   // Enter App Button
                   SizedBox(
                     width: double.infinity,
@@ -170,12 +172,15 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const AssessmentPage(),
+                            builder: (context) => const BottomNavigationPage(
+                              portfolioScoreName: 'Income with Moderate Growth',
+                              initialIndex: 2, // Start with Assessment tab
+                            ),
                           ),
                         );
                       },
-                                             style: ElevatedButton.styleFrom(
-                         backgroundColor: const Color(0xFF4CAF50),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF4CAF50),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         shape: RoundedRectangleBorder(
@@ -210,9 +215,9 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 20),
-                  
+
                   // Footer
                   Container(
                     padding: const EdgeInsets.all(20),
@@ -223,9 +228,9 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                     ),
                     child: Column(
                       children: [
-                                                 Icon(
-                           Icons.security,
-                           color: const Color(0xFF4CAF50).withOpacity(0.7),
+                        Icon(
+                          Icons.security,
+                          color: const Color(0xFF4CAF50).withOpacity(0.7),
                           size: 24,
                         ),
                         const SizedBox(height: 12),
@@ -259,13 +264,13 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
         Container(
           width: 50,
           height: 50,
-                     decoration: BoxDecoration(
-             color: const Color(0xFF4CAF50).withOpacity(0.2),
-             borderRadius: BorderRadius.circular(12),
-           ),
-           child: Icon(
-             icon,
-             color: const Color(0xFF4CAF50),
+          decoration: BoxDecoration(
+            color: const Color(0xFF4CAF50).withOpacity(0.2),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(
+            icon,
+            color: const Color(0xFF4CAF50),
             size: 24,
           ),
         ),

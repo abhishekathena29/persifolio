@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:persifolio/feature/home/presentation/home.page.dart';
+import 'package:persifolio/feature/bottom_navigation/bottom_navigation.dart';
 import 'package:persifolio/feature/scoring/score_info_page.dart';
 
 class ScoringPage extends StatelessWidget {
@@ -35,7 +35,7 @@ class ScoringPage extends StatelessWidget {
             ],
           ),
           child: IconButton(
-                         icon: const Icon(Icons.arrow_back, color: Color(0xFF4CAF50)),
+            icon: const Icon(Icons.arrow_back, color: Color(0xFF4CAF50)),
             onPressed: () => Navigator.pop(context),
           ),
         ),
@@ -47,7 +47,7 @@ class ScoringPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Spacer(),
-              
+
               // Score Card
               Container(
                 padding: const EdgeInsets.all(32),
@@ -70,9 +70,9 @@ class ScoringPage extends StatelessWidget {
                         color: const Color(0xFF4CAF50).withOpacity(0.2),
                         borderRadius: BorderRadius.circular(16),
                       ),
-                                               child: const Icon(
-                           Icons.emoji_events,
-                           color: Color(0xFF4CAF50),
+                      child: const Icon(
+                        Icons.emoji_events,
+                        color: Color(0xFF4CAF50),
                         size: 48,
                       ),
                     ),
@@ -97,9 +97,9 @@ class ScoringPage extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 40),
-              
+
               // Description
               Container(
                 padding: const EdgeInsets.all(24),
@@ -119,9 +119,9 @@ class ScoringPage extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 40),
-              
+
               // Continue Button
               SizedBox(
                 width: double.infinity,
@@ -140,10 +140,13 @@ class ScoringPage extends StatelessWidget {
                       portfolioType = "Aggressive Growth";
                     }
                     if (portfolioType.isNotEmpty) {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => HomePage(portfolioScoreName: portfolioType),
+                          builder: (context) => BottomNavigationPage(
+                            portfolioScoreName: portfolioType,
+                            initialIndex: 0, // Start with Home tab
+                          ),
                         ),
                       );
                     }
@@ -166,9 +169,9 @@ class ScoringPage extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 20),
-              
+
               // Info Button
               TextButton(
                 onPressed: () {
@@ -188,7 +191,7 @@ class ScoringPage extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               const Spacer(),
             ],
           ),
