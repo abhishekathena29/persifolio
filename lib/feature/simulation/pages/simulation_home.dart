@@ -391,9 +391,9 @@ class _SimulationHomePageState extends State<SimulationHomePage>
                               ),
                             ),
                             const SizedBox(height: 12),
-                            Row(
+                            const Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: const [
+                              children: [
                                 Text('16',
                                     style: TextStyle(
                                         color: Colors.grey, fontSize: 12)),
@@ -447,11 +447,11 @@ class _SimulationHomePageState extends State<SimulationHomePage>
                               ),
                             ),
                             const SizedBox(width: 16),
-                            Expanded(
+                            const Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
+                                  Text(
                                     'Amazon',
                                     style: TextStyle(
                                       fontSize: 16,
@@ -459,7 +459,7 @@ class _SimulationHomePageState extends State<SimulationHomePage>
                                       color: Colors.white,
                                     ),
                                   ),
-                                  const Text(
+                                  Text(
                                     'TOP PERFORMING',
                                     style: TextStyle(
                                       fontSize: 12,
