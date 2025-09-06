@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        cardTheme: CardThemeData(
+        cardTheme: CardTheme(
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -137,7 +137,7 @@ class MyApp extends StatelessWidget {
           type: BottomNavigationBarType.fixed,
           elevation: 0,
         ),
-        dialogTheme: DialogThemeData(
+        dialogTheme: DialogTheme(
           backgroundColor: const Color(0xFF1A1A1A),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),

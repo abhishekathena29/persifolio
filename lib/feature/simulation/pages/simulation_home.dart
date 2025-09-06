@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:persifolio/services/alpha_vantage_service.dart';
 import 'package:persifolio/services/portfolio_service.dart';
 import 'package:persifolio/feature/simulation/pages/stock_detail.dart';
+import 'package:persifolio/feature/simulation/pages/portfolio_holdings.dart';
 
 class SimulationHomePage extends StatefulWidget {
   const SimulationHomePage({super.key});
@@ -13,10 +14,9 @@ class SimulationHomePage extends StatefulWidget {
 class _SimulationHomePageState extends State<SimulationHomePage>
     with TickerProviderStateMixin {
   double _portfolioValue = 10000.0;
-  double _totalGain = 0.0;
-  double _gainPercentage = 0.0;
+  double _availableCash = 100000.0;
+  double _dailyPnL = 0.0;
   bool _isLoading = true;
-  Map<String, dynamic>? _userProfile;
   List<Map<String, dynamic>> _topStocks = [];
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -47,13 +47,6 @@ class _SimulationHomePageState extends State<SimulationHomePage>
 
   Future<void> _loadInitialData() async {
     try {
-      // Set default profile for demo
-      _userProfile = {
-        'name': 'Investor',
-        'email': 'demo@example.com',
-        'photoUrl': '',
-      };
-
       // Load portfolio data
       await _loadPortfolioData();
 
@@ -203,8 +196,8 @@ class _SimulationHomePageState extends State<SimulationHomePage>
       final portfolio = await PortfolioService.getUserPortfolio();
       setState(() {
         _portfolioValue = (portfolio['totalValue'] ?? 10000.0).toDouble();
-        _totalGain = (portfolio['totalGain'] ?? 1250.0).toDouble();
-        _gainPercentage = (portfolio['gainPercentage'] ?? 12.5).toDouble();
+        _availableCash = (portfolio['availableCash'] ?? 100000.0).toDouble();
+        _dailyPnL = (portfolio['dailyPnL'] ?? 0.0).toDouble();
       });
     } catch (e) {
       print('Error loading portfolio: $e');
@@ -305,24 +298,87 @@ class _SimulationHomePageState extends State<SimulationHomePage>
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Total portfolio',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '₹${_portfolioValue.toStringAsFixed(2)}',
+                                        style: const TextStyle(
+                                          fontSize: 32,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: _dailyPnL >= 0 
+                                                  ? Colors.green.withOpacity(0.2)
+                                                  : Colors.red.withOpacity(0.2),
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            child: Text(
+                                              '${_dailyPnL >= 0 ? '+' : ''}₹${_dailyPnL.toStringAsFixed(2)}',
+                                              style: TextStyle(
+                                                color: _dailyPnL >= 0 ? Colors.green : Colors.red,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            'Today',
+                                            style: TextStyle(
+                                              color: Colors.grey.shade400,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
                                 Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     const Text(
-                                      'Total portfolio',
+                                      'Available Cash',
                                       style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 12,
                                         color: Colors.grey,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      '₹${_portfolioValue.toStringAsFixed(2)}',
+                                      '₹${_availableCash.toStringAsFixed(2)}',
                                       style: const TextStyle(
-                                        fontSize: 32,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'of ₹${PortfolioService.getMaxInvestmentLimit().toStringAsFixed(0)}',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.grey.shade400,
                                       ),
                                     ),
                                   ],
@@ -702,17 +758,35 @@ class _SimulationHomePageState extends State<SimulationHomePage>
                 ),
               ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const PortfolioHoldingsPage(),
+            ),
+          );
+          // Refresh portfolio data when returning from portfolio page
+          await _loadPortfolioData();
+        },
+        backgroundColor: const Color(0xFFFF6B35),
+        child: const Icon(Icons.account_balance_wallet, color: Colors.white),
+      ),
     );
   }
 
   Widget _buildStockCard(Map<String, dynamic> stock) {
     return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => StockDetailPage(stock: stock),
-        ),
-      ),
+      onTap: () async {
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => StockDetailPage(stock: stock),
+          ),
+        );
+        // Refresh portfolio data when returning from stock detail
+        await _loadPortfolioData();
+      },
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),

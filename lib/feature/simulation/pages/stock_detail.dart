@@ -679,24 +679,36 @@ class _StockDetailPageState extends State<StockDetailPage> with TickerProviderSt
                           'avgPrice': (widget.stock['price'] as num).toDouble(),
                           'currentPrice': (widget.stock['price'] as num).toDouble(),
                         };
-                        await PortfolioService.addStockToPortfolio(stock);
+                        final result = await PortfolioService.addStockToPortfolio(stock);
+                        
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(result['message']),
+                              backgroundColor: result['success'] ? Colors.green : Colors.red,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                          );
+                        }
                       } else {
-                        await PortfolioService.removeStockFromPortfolio(
+                        final result = await PortfolioService.removeStockFromPortfolio(
                           widget.stock['symbol'],
                           shares,
                         );
-                      }
-                      
-                      if (context.mounted) {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Successfully $action ${shares} shares of ${widget.stock['symbol']}'),
-                            backgroundColor: color,
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          ),
-                        );
+                        
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(result['message']),
+                              backgroundColor: result['success'] ? Colors.red : Colors.orange,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                          );
+                        }
                       }
                     },
                     style: ElevatedButton.styleFrom(

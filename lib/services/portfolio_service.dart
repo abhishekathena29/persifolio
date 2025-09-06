@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class PortfolioService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static final FirebaseAuth _auth = FirebaseAuth.instance;
+  static const double _maxInvestmentLimit = 100000.0; // 1 lakh rupees
 
   static String get _userId => _auth.currentUser?.uid ?? '';
 
@@ -44,26 +45,51 @@ class PortfolioService {
     }
   }
 
-  // Add stock to portfolio
-  static Future<void> addStockToPortfolio(Map<String, dynamic> stock) async {
-    if (_userId.isEmpty) return;
+  // Add stock to portfolio with investment limit validation
+  static Future<Map<String, dynamic>> addStockToPortfolio(Map<String, dynamic> stock) async {
+    if (_userId.isEmpty) return {'success': false, 'message': 'User not authenticated'};
 
     try {
       // Validate stock data
       if (!_validateStockData(stock)) {
-        throw Exception('Invalid stock data');
+        return {'success': false, 'message': 'Invalid stock data'};
       }
 
       final portfolio = await getUserPortfolio();
       final holdings = List<Map<String, dynamic>>.from(portfolio['holdings'] ?? []);
       
+      // Calculate total investment amount
+      final investmentAmount = (stock['shares'] as int) * (stock['avgPrice'] as double);
+      final currentTotalInvestment = _calculateTotalInvestment(holdings);
+      
+      // Check if adding this stock would exceed the limit
+      if (currentTotalInvestment + investmentAmount > _maxInvestmentLimit) {
+        final availableAmount = _maxInvestmentLimit - currentTotalInvestment;
+        return {
+          'success': false, 
+          'message': 'Investment limit exceeded. Available amount: ₹${availableAmount.toStringAsFixed(2)}'
+        };
+      }
+      
       // Check if stock already exists
       final existingIndex = holdings.indexWhere((h) => h['symbol'] == stock['symbol']);
       
       if (existingIndex >= 0) {
-        // Update existing holding
+        // Check if adding more shares would exceed limit
         final existing = holdings[existingIndex];
         final newShares = existing['shares'] + stock['shares'];
+        final newInvestmentAmount = newShares * stock['avgPrice'];
+        final newTotalInvestment = currentTotalInvestment - (existing['shares'] * existing['avgPrice']) + newInvestmentAmount;
+        
+        if (newTotalInvestment > _maxInvestmentLimit) {
+          final maxAdditionalShares = ((_maxInvestmentLimit - currentTotalInvestment + (existing['shares'] * existing['avgPrice'])) / stock['avgPrice']).floor();
+          return {
+            'success': false, 
+            'message': 'Cannot add ${stock['shares']} shares. Maximum additional shares: $maxAdditionalShares'
+          };
+        }
+        
+        // Update existing holding
         final newAvgPrice = ((existing['avgPrice'] * existing['shares']) + 
                            (stock['avgPrice'] * stock['shares'])) / newShares;
         
@@ -76,6 +102,7 @@ class PortfolioService {
           'gain': (stock['currentPrice'] - newAvgPrice) * newShares,
           'gainPercent': ((stock['currentPrice'] - newAvgPrice) / newAvgPrice) * 100,
           'isPositive': stock['currentPrice'] >= newAvgPrice,
+          'lastUpdated': DateTime.now().toIso8601String(),
         };
       } else {
         // Add new holding
@@ -88,6 +115,7 @@ class PortfolioService {
           'gain': gain,
           'gainPercent': gainPercent,
           'isPositive': stock['currentPrice'] >= stock['avgPrice'],
+          'lastUpdated': DateTime.now().toIso8601String(),
         });
       }
 
@@ -95,63 +123,87 @@ class PortfolioService {
       portfolio['totalValue'] = _calculateTotalValue(holdings);
       portfolio['totalGain'] = _calculateTotalGain(holdings);
       portfolio['gainPercentage'] = _calculateGainPercentage(portfolio['totalValue'], portfolio['totalGain']);
+      portfolio['totalInvestment'] = _calculateTotalInvestment(holdings);
+      portfolio['availableCash'] = _maxInvestmentLimit - portfolio['totalInvestment'];
+      portfolio['lastUpdated'] = DateTime.now().toIso8601String();
       
       await updateUserPortfolio(portfolio);
+      
+      return {
+        'success': true, 
+        'message': 'Successfully added ${stock['shares']} shares of ${stock['symbol']}',
+        'portfolio': portfolio
+      };
     } catch (e) {
       print('Error adding stock: $e');
-      throw Exception('Failed to add stock to portfolio');
+      return {'success': false, 'message': 'Failed to add stock to portfolio'};
     }
   }
 
   // Remove stock from portfolio
-  static Future<void> removeStockFromPortfolio(String symbol, int shares) async {
-    if (_userId.isEmpty) return;
+  static Future<Map<String, dynamic>> removeStockFromPortfolio(String symbol, int shares) async {
+    if (_userId.isEmpty) return {'success': false, 'message': 'User not authenticated'};
 
     try {
       final portfolio = await getUserPortfolio();
       final holdings = List<Map<String, dynamic>>.from(portfolio['holdings'] ?? []);
       
       final existingIndex = holdings.indexWhere((h) => h['symbol'] == symbol);
-      if (existingIndex >= 0) {
-        final existing = holdings[existingIndex];
-        final remainingShares = existing['shares'] - shares;
-        
-        if (remainingShares <= 0) {
-          // Remove entire holding
-          holdings.removeAt(existingIndex);
-        } else {
-          // Update holding with remaining shares
-          holdings[existingIndex] = {
-            ...existing,
-            'shares': remainingShares,
-            'totalValue': remainingShares * existing['currentPrice'],
-            'gain': (existing['currentPrice'] - existing['avgPrice']) * remainingShares,
-            'gainPercent': ((existing['currentPrice'] - existing['avgPrice']) / existing['avgPrice']) * 100,
-          };
-        }
+      if (existingIndex < 0) {
+        return {'success': false, 'message': 'Stock not found in portfolio'};
+      }
+      
+      final existing = holdings[existingIndex];
+      if (existing['shares'] < shares) {
+        return {'success': false, 'message': 'Insufficient shares. Available: ${existing['shares']}'};
+      }
+      
+      final remainingShares = existing['shares'] - shares;
+      
+      if (remainingShares <= 0) {
+        // Remove entire holding
+        holdings.removeAt(existingIndex);
       } else {
-        throw Exception('Stock not found in portfolio');
+        // Update holding with remaining shares
+        holdings[existingIndex] = {
+          ...existing,
+          'shares': remainingShares,
+          'totalValue': remainingShares * existing['currentPrice'],
+          'gain': (existing['currentPrice'] - existing['avgPrice']) * remainingShares,
+          'gainPercent': ((existing['currentPrice'] - existing['avgPrice']) / existing['avgPrice']) * 100,
+          'lastUpdated': DateTime.now().toIso8601String(),
+        };
       }
 
       portfolio['holdings'] = holdings;
       portfolio['totalValue'] = _calculateTotalValue(holdings);
       portfolio['totalGain'] = _calculateTotalGain(holdings);
       portfolio['gainPercentage'] = _calculateGainPercentage(portfolio['totalValue'], portfolio['totalGain']);
+      portfolio['totalInvestment'] = _calculateTotalInvestment(holdings);
+      portfolio['availableCash'] = _maxInvestmentLimit - portfolio['totalInvestment'];
+      portfolio['lastUpdated'] = DateTime.now().toIso8601String();
       
       await updateUserPortfolio(portfolio);
+      
+      return {
+        'success': true, 
+        'message': 'Successfully sold $shares shares of $symbol',
+        'portfolio': portfolio
+      };
     } catch (e) {
       print('Error removing stock: $e');
-      throw Exception('Failed to remove stock from portfolio');
+      return {'success': false, 'message': 'Failed to remove stock from portfolio'};
     }
   }
 
-  // Update stock prices in portfolio
+  // Update stock prices in portfolio and calculate daily P&L
   static Future<void> updatePortfolioPrices(List<Map<String, dynamic>> stockPrices) async {
     if (_userId.isEmpty) return;
 
     try {
       final portfolio = await getUserPortfolio();
       final holdings = List<Map<String, dynamic>>.from(portfolio['holdings'] ?? []);
+      double dailyPnL = 0.0;
       
       for (int i = 0; i < holdings.length; i++) {
         final holding = holdings[i];
@@ -161,8 +213,13 @@ class PortfolioService {
         );
         
         final currentPrice = stockPrice['price'];
+        final previousPrice = holding['currentPrice'] ?? holding['avgPrice'];
         final shares = holding['shares'];
         final avgPrice = holding['avgPrice'];
+        
+        // Calculate daily P&L for this holding
+        final holdingDailyPnL = (currentPrice - previousPrice) * shares;
+        dailyPnL += holdingDailyPnL;
         
         holdings[i] = {
           ...holding,
@@ -171,6 +228,8 @@ class PortfolioService {
           'gain': (currentPrice - avgPrice) * shares,
           'gainPercent': ((currentPrice - avgPrice) / avgPrice) * 100,
           'isPositive': currentPrice >= avgPrice,
+          'dailyPnL': holdingDailyPnL,
+          'lastUpdated': DateTime.now().toIso8601String(),
         };
       }
 
@@ -178,6 +237,10 @@ class PortfolioService {
       portfolio['totalValue'] = _calculateTotalValue(holdings);
       portfolio['totalGain'] = _calculateTotalGain(holdings);
       portfolio['gainPercentage'] = _calculateGainPercentage(portfolio['totalValue'], portfolio['totalGain']);
+      portfolio['totalInvestment'] = _calculateTotalInvestment(holdings);
+      portfolio['availableCash'] = _maxInvestmentLimit - portfolio['totalInvestment'];
+      portfolio['dailyPnL'] = dailyPnL;
+      portfolio['lastUpdated'] = DateTime.now().toIso8601String();
       
       await updateUserPortfolio(portfolio);
     } catch (e) {
@@ -227,9 +290,13 @@ class PortfolioService {
   static Map<String, dynamic> _getDefaultPortfolio() {
     return {
       'totalValue': 10000.0,
-      'totalGain': 1250.0,
-      'gainPercentage': 12.5,
+      'totalGain': 0.0,
+      'gainPercentage': 0.0,
+      'totalInvestment': 0.0,
+      'availableCash': _maxInvestmentLimit,
+      'dailyPnL': 0.0,
       'holdings': [],
+      'lastUpdated': DateTime.now().toIso8601String(),
     };
   }
 
@@ -247,7 +314,11 @@ class PortfolioService {
       'totalValue': (data['totalValue'] ?? 0.0).toDouble(),
       'totalGain': (data['totalGain'] ?? 0.0).toDouble(),
       'gainPercentage': (data['gainPercentage'] ?? 0.0).toDouble(),
+      'totalInvestment': (data['totalInvestment'] ?? 0.0).toDouble(),
+      'availableCash': (data['availableCash'] ?? _maxInvestmentLimit).toDouble(),
+      'dailyPnL': (data['dailyPnL'] ?? 0.0).toDouble(),
       'holdings': List<Map<String, dynamic>>.from(data['holdings'] ?? []),
+      'lastUpdated': data['lastUpdated'] ?? DateTime.now().toIso8601String(),
     };
   }
 
@@ -270,6 +341,11 @@ class PortfolioService {
   static double _calculateTotalGain(List<Map<String, dynamic>> holdings) {
     return holdings.fold(0.0, (sum, holding) => 
       sum + ((holding['gain'] ?? 0.0) as double));
+  }
+
+  static double _calculateTotalInvestment(List<Map<String, dynamic>> holdings) {
+    return holdings.fold(0.0, (sum, holding) => 
+      sum + ((holding['shares'] ?? 0) * (holding['avgPrice'] ?? 0.0)));
   }
 
   static double _calculateGainPercentage(double totalValue, double totalGain) {
@@ -331,6 +407,9 @@ class PortfolioService {
           'topPerformer': null,
           'worstPerformer': null,
           'avgGain': 0.0,
+          'totalInvestment': 0.0,
+          'availableCash': _maxInvestmentLimit,
+          'dailyPnL': 0.0,
         };
       }
 
@@ -346,6 +425,9 @@ class PortfolioService {
         'topPerformer': topPerformer,
         'worstPerformer': worstPerformer,
         'avgGain': avgGain,
+        'totalInvestment': portfolio['totalInvestment'] ?? 0.0,
+        'availableCash': portfolio['availableCash'] ?? _maxInvestmentLimit,
+        'dailyPnL': portfolio['dailyPnL'] ?? 0.0,
       };
     } catch (e) {
       print('Error getting portfolio stats: $e');
@@ -354,7 +436,13 @@ class PortfolioService {
         'topPerformer': null,
         'worstPerformer': null,
         'avgGain': 0.0,
+        'totalInvestment': 0.0,
+        'availableCash': _maxInvestmentLimit,
+        'dailyPnL': 0.0,
       };
     }
   }
+
+  // Get investment limit
+  static double getMaxInvestmentLimit() => _maxInvestmentLimit;
 }
