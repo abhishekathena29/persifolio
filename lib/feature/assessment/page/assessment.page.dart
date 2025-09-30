@@ -30,18 +30,27 @@ class _AssessmentPageState extends State<AssessmentPage> {
 
   bool isLoading = false;
   getQuestionFirebase() async {
-    setState(() {
-      isLoading = true;
-    });
-    var ques = await FirebaseFirestore.instance
-        .collection('assessment')
-        .orderBy('questionNo')
-        .get();
-    questionList =
-        ques.docs.map((element) => Question.fromMap(element.data())).toList();
-    setState(() {
-      isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
+
+    try {
+      var ques = await FirebaseFirestore.instance
+          .collection('assessment')
+          .orderBy('questionNo')
+          .get();
+      questionList =
+          ques.docs.map((element) => Question.fromMap(element.data())).toList();
+    } catch (e) {
+      print('Error fetching questions: $e');
+    }
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   Map<int, int> mp = {};
@@ -74,17 +83,17 @@ class _AssessmentPageState extends State<AssessmentPage> {
               ),
             ],
           ),
-                     child: IconButton(
-             icon: const Icon(Icons.arrow_back, color: Color(0xFF4CAF50)),
-             onPressed: () => Navigator.pop(context),
-           ),
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Color(0xFF4CAF50)),
+            onPressed: () => Navigator.pop(context),
+          ),
         ),
       ),
       body: isLoading
           ? const Center(
-                             child: CircularProgressIndicator(
-                 valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4CAF50)),
-               ),
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4CAF50)),
+              ),
             )
           : Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
@@ -118,46 +127,50 @@ class _AssessmentPageState extends State<AssessmentPage> {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                                                         Container(
-                               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                               decoration: BoxDecoration(
-                                 color: const Color(0xFF4CAF50).withOpacity(0.2),
-                                 borderRadius: BorderRadius.circular(12),
-                               ),
-                               child: const Text(
-                                 'Complete',
-                                 style: TextStyle(
-                                   color: Color(0xFF4CAF50),
-                                   fontWeight: FontWeight.bold,
-                                   fontSize: 12,
-                                 ),
-                               ),
-                             ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF4CAF50).withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Text(
+                                'Complete',
+                                style: TextStyle(
+                                  color: Color(0xFF4CAF50),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 16),
-                                                 LinearProgressIndicator(
-                           value: questionList.isEmpty ? 0 : currentPageIndex / (questionList.length - 1),
-                           backgroundColor: Colors.grey.shade800,
-                           valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF4CAF50)),
-                           minHeight: 8,
-                         ),
+                        LinearProgressIndicator(
+                          value: questionList.isEmpty
+                              ? 0
+                              : currentPageIndex / (questionList.length - 1),
+                          backgroundColor: Colors.grey.shade800,
+                          valueColor: const AlwaysStoppedAnimation<Color>(
+                              Color(0xFF4CAF50)),
+                          minHeight: 8,
+                        ),
                       ],
                     ),
                   ),
                   Expanded(
-                                           child: PageView.builder(
-                         controller: controller,
-                         onPageChanged: (index) {
-                           setState(() {
-                             currentPageIndex = index;
-                             if (index == questionList.length - 1) {
-                               isLast = true;
-                             } else {
-                               isLast = false;
-                             }
-                           });
-                         },
+                    child: PageView.builder(
+                      controller: controller,
+                      onPageChanged: (index) {
+                        setState(() {
+                          currentPageIndex = index;
+                          if (index == questionList.length - 1) {
+                            isLast = true;
+                          } else {
+                            isLast = false;
+                          }
+                        });
+                      },
                       itemCount: questionList.length,
                       itemBuilder: (context, index) {
                         var question = questionList[index];
@@ -210,14 +223,15 @@ class _AssessmentPageState extends State<AssessmentPage> {
                                       builder: (context) =>
                                           ScoringPage(score: totalScore)));
                             },
-                                                         style: ElevatedButton.styleFrom(
-                               backgroundColor: const Color(0xFF4CAF50),
-                               foregroundColor: Colors.white,
-                               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                               shape: RoundedRectangleBorder(
-                                 borderRadius: BorderRadius.circular(16),
-                               ),
-                             ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF4CAF50),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 32, vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
                             child: const Text(
                               "Submit",
                               style: TextStyle(

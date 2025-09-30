@@ -20,56 +20,28 @@ class BottomNavigationPage extends StatefulWidget {
 
 class _BottomNavigationPageState extends State<BottomNavigationPage> {
   late int _currentIndex;
-  late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
-    _pageController = PageController(initialPage: _currentIndex);
   }
 
   @override
   void dispose() {
-    _pageController.dispose();
     super.dispose();
-  }
-
-  void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-    _pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
   }
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> pages = [
+      HomePage(portfolioScoreName: widget.portfolioScoreName),
+      SimulationHomePage(),
+      AssessmentPage(),
+      ProfilePage(portfolioScoreName: widget.portfolioScoreName),
+    ];
     return Scaffold(
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        children: [
-          // Home Page
-          HomePage(portfolioScoreName: widget.portfolioScoreName),
-
-          // Simulation Page
-          const SimulationHomePage(),
-
-          // Assessment Page
-          const AssessmentPage(),
-
-          // Profile Page
-          ProfilePage(portfolioScoreName: widget.portfolioScoreName),
-        ],
-      ),
+      body: pages.elementAt(_currentIndex),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: const Color(0xFF1A1A1A),
@@ -123,7 +95,9 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
     final isSelected = _currentIndex == index;
 
     return GestureDetector(
-      onTap: () => _onTabTapped(index),
+      onTap: () => setState(() {
+        _currentIndex = index;
+      }),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(

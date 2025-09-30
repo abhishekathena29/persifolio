@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:persifolio/services/alpha_vantage_service.dart';
-import 'package:persifolio/services/portfolio_service.dart';
+import 'package:persifolio/services/enhanced_portfolio_service.dart';
 import 'package:persifolio/feature/simulation/pages/stock_detail.dart';
+import 'package:persifolio/feature/simulation/pages/transaction_history.dart';
+import 'package:persifolio/feature/simulation/pages/portfolio.dart';
 
 class SimulationHomePage extends StatefulWidget {
   const SimulationHomePage({super.key});
@@ -200,12 +202,14 @@ class _SimulationHomePageState extends State<SimulationHomePage>
 
   Future<void> _loadPortfolioData() async {
     try {
-      final portfolio = await PortfolioService.getUserPortfolio();
-      setState(() {
-        _portfolioValue = (portfolio['totalValue'] ?? 10000.0).toDouble();
-        _totalGain = (portfolio['totalGain'] ?? 1250.0).toDouble();
-        _gainPercentage = (portfolio['gainPercentage'] ?? 12.5).toDouble();
-      });
+      final portfolio = await EnhancedPortfolioService.getPortfolio();
+      if (portfolio != null) {
+        setState(() {
+          _portfolioValue = portfolio.totalValue;
+          _totalGain = portfolio.totalGain;
+          _gainPercentage = portfolio.gainPercentage;
+        });
+      }
     } catch (e) {
       print('Error loading portfolio: $e');
       // Keep default values
@@ -277,85 +281,305 @@ class _SimulationHomePageState extends State<SimulationHomePage>
                   ],
                 ),
               )
-            : FadeTransition(
-                opacity: _fadeAnimation,
-                child: SlideTransition(
-                  position: _slideAnimation,
-                  child: Column(
-                    children: [
-                      // Header with Portfolio Value
-                      Container(
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF1A1A1A),
-                          borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(24),
-                            bottomRight: Radius.circular(24),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
-                              blurRadius: 20,
-                              offset: const Offset(0, 4),
+            : SingleChildScrollView(
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: SlideTransition(
+                    position: _slideAnimation,
+                    child: Column(
+                      children: [
+                        // Header with Portfolio Value
+                        Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1A1A1A),
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(24),
+                              bottomRight: Radius.circular(24),
                             ),
-                          ],
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.3),
+                                blurRadius: 20,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Total portfolio',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '₹${_portfolioValue.toStringAsFixed(2)}',
+                                        style: const TextStyle(
+                                          fontSize: 32,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const PortfolioPage(),
+                                          ),
+                                        ),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFFF6B35)
+                                                .withOpacity(0.2),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          child: const Icon(
+                                            Icons.account_balance_wallet,
+                                            color: Color(0xFFFF6B35),
+                                            size: 24,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      GestureDetector(
+                                        onTap: () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const TransactionHistoryPage(),
+                                          ),
+                                        ),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFFF6B35)
+                                                .withOpacity(0.2),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          child: const Icon(
+                                            Icons.history,
+                                            color: Color(0xFFFF6B35),
+                                            size: 24,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+
+                              // Performance Chart
+                              SizedBox(
+                                height: 60,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: List.generate(7, (index) {
+                                    final height = 20.0 + (index % 3) * 15.0;
+                                    final isPositive = index % 2 == 0;
+                                    return Container(
+                                      width: 8,
+                                      height: height,
+                                      decoration: BoxDecoration(
+                                        color: isPositive
+                                            ? Colors.green
+                                            : Colors.grey.shade600,
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                    );
+                                  }),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              const Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text('16',
+                                      style: TextStyle(
+                                          color: Colors.grey, fontSize: 12)),
+                                  Text('23',
+                                      style: TextStyle(
+                                          color: Colors.grey, fontSize: 12)),
+                                  Text('30',
+                                      style: TextStyle(
+                                          color: Colors.grey, fontSize: 12)),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
+
+                        const SizedBox(height: 20),
+
+                        // Top Performing Asset
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1A1A1A),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 10,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    'A',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF1A1A1A),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              const Expanded(
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
-                                      'Total portfolio',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
                                     Text(
-                                      '₹${_portfolioValue.toStringAsFixed(2)}',
-                                      style: const TextStyle(
-                                        fontSize: 32,
+                                      'Amazon',
+                                      style: TextStyle(
+                                        fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
                                       ),
                                     ),
+                                    Text(
+                                      'TOP PERFORMING',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Color(0xFFFF6B35),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
                                   ],
                                 ),
-                                Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFFF6B35)
-                                        .withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(12),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Colors.green.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Text(
+                                  '+14%',
+                                  style: TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
                                   ),
-                                  child: Stack(
-                                    children: [
-                                      const Icon(
-                                        Icons.flash_on,
-                                        color: Color(0xFFFF6B35),
-                                        size: 24,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        // Category Performance
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF1A1A1A),
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 2),
                                       ),
-                                      Positioned(
-                                        top: -2,
-                                        right: -2,
-                                        child: Container(
-                                          padding: const EdgeInsets.all(4),
-                                          decoration: const BoxDecoration(
+                                    ],
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.flash_on,
                                             color: Color(0xFFFF6B35),
-                                            shape: BoxShape.circle,
+                                            size: 20,
                                           ),
-                                          child: const Text(
-                                            '3',
+                                          const SizedBox(width: 8),
+                                          const Text(
+                                            'Energy',
                                             style: TextStyle(
                                               color: Colors.white,
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.bold,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      const Text(
+                                        '+67%',
+                                        style: TextStyle(
+                                          color: Color(0xFFFF6B35),
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Container(
+                                        height: 4,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.shade800,
+                                          borderRadius:
+                                              BorderRadius.circular(2),
+                                        ),
+                                        child: FractionallySizedBox(
+                                          alignment: Alignment.centerLeft,
+                                          widthFactor: 0.67,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFFFF6B35),
+                                              borderRadius:
+                                                  BorderRadius.circular(2),
                                             ),
                                           ),
                                         ),
@@ -363,331 +587,136 @@ class _SimulationHomePageState extends State<SimulationHomePage>
                                     ],
                                   ),
                                 ),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
-
-                            // Performance Chart
-                            Container(
-                              height: 60,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: List.generate(7, (index) {
-                                  final height = 20.0 + (index % 3) * 15.0;
-                                  final isPositive = index % 2 == 0;
-                                  return Container(
-                                    width: 8,
-                                    height: height,
-                                    decoration: BoxDecoration(
-                                      color: isPositive
-                                          ? Colors.green
-                                          : Colors.grey.shade600,
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                  );
-                                }),
                               ),
-                            ),
-                            const SizedBox(height: 12),
-                            const Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text('16',
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 12)),
-                                Text('23',
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 12)),
-                                Text('30',
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 12)),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // Top Performing Asset
-                      Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 20),
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF1A1A1A),
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              blurRadius: 10,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 50,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              child: const Center(
-                                child: Text(
-                                  'A',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF1A1A1A),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF1A1A1A),
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.memory,
+                                            color: Color(0xFFFF6B35),
+                                            size: 20,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          const Text(
+                                            'Technology',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      const Text(
+                                        '+25%',
+                                        style: TextStyle(
+                                          color: Color(0xFFFF6B35),
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Container(
+                                        height: 4,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.shade800,
+                                          borderRadius:
+                                              BorderRadius.circular(2),
+                                        ),
+                                        child: FractionallySizedBox(
+                                          alignment: Alignment.centerLeft,
+                                          widthFactor: 0.25,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFFFF6B35),
+                                              borderRadius:
+                                                  BorderRadius.circular(2),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 16),
-                            const Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Amazon',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  Text(
-                                    'TOP PERFORMING',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Color(0xFFFF6B35),
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: Colors.green.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Text(
-                                '+14%',
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        // Market Overview Header
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Market Overview',
                                 style: TextStyle(
-                                  color: Colors.green,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 14,
+                                  color: Colors.white,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // Category Performance
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                padding: const EdgeInsets.all(16),
+                              Container(
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF1A1A1A),
-                                  borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.2),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
+                                  color:
+                                      const Color(0xFFFF6B35).withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.flash_on,
-                                          color: Color(0xFFFF6B35),
-                                          size: 20,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        const Text(
-                                          'Energy',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8),
-                                    const Text(
-                                      '+67%',
-                                      style: TextStyle(
-                                        color: Color(0xFFFF6B35),
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Container(
-                                      height: 4,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.shade800,
-                                        borderRadius: BorderRadius.circular(2),
-                                      ),
-                                      child: FractionallySizedBox(
-                                        alignment: Alignment.centerLeft,
-                                        widthFactor: 0.67,
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFFFF6B35),
-                                            borderRadius:
-                                                BorderRadius.circular(2),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Container(
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF1A1A1A),
-                                  borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.2),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.memory,
-                                          color: Color(0xFFFF6B35),
-                                          size: 20,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        const Text(
-                                          'Technology',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8),
-                                    const Text(
-                                      '+25%',
-                                      style: TextStyle(
-                                        color: Color(0xFFFF6B35),
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Container(
-                                      height: 4,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.shade800,
-                                        borderRadius: BorderRadius.circular(2),
-                                      ),
-                                      child: FractionallySizedBox(
-                                        alignment: Alignment.centerLeft,
-                                        widthFactor: 0.25,
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFFFF6B35),
-                                            borderRadius:
-                                                BorderRadius.circular(2),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // Market Overview Header
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Market Overview',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFFF6B35).withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: IconButton(
-                                onPressed: () async {
-                                  final selected =
-                                      await showSearch<Map<String, dynamic>?>(
-                                    context: context,
-                                    delegate: _StockSearchDelegate(),
-                                  );
-                                  if (selected != null && mounted) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            StockDetailPage(stock: selected),
-                                      ),
+                                child: IconButton(
+                                  onPressed: () async {
+                                    final selected =
+                                        await showSearch<Map<String, dynamic>?>(
+                                      context: context,
+                                      delegate: _StockSearchDelegate(),
                                     );
-                                  }
-                                },
-                                icon: const Icon(Icons.search,
-                                    color: Color(0xFFFF6B35)),
+                                    if (selected != null && mounted) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              StockDetailPage(stock: selected),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  icon: const Icon(Icons.search,
+                                      color: Color(0xFFFF6B35)),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
 
-                      const SizedBox(height: 12),
+                        const SizedBox(height: 12),
 
-                      // Stock List
-                      Expanded(
-                        child: RefreshIndicator(
+                        // Stock List
+                        RefreshIndicator(
                           onRefresh: _refreshStockData,
                           color: const Color(0xFFFF6B35),
                           child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             itemCount: _topStocks.length,
                             itemBuilder: (context, index) {
@@ -696,8 +725,8 @@ class _SimulationHomePageState extends State<SimulationHomePage>
                             },
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

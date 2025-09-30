@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:persifolio/services/portfolio_service.dart';
+import 'package:persifolio/services/enhanced_portfolio_service.dart';
+import 'package:persifolio/models/portfolio_models.dart';
 
 class PortfolioPage extends StatefulWidget {
   const PortfolioPage({super.key});
@@ -8,12 +9,10 @@ class PortfolioPage extends StatefulWidget {
   State<PortfolioPage> createState() => _PortfolioPageState();
 }
 
-class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateMixin {
-  double _totalValue = 0.0;
-  double _totalGain = 0.0;
-  double _gainPercentage = 0.0;
+class _PortfolioPageState extends State<PortfolioPage>
+    with TickerProviderStateMixin {
+  Portfolio? _portfolio;
   bool _loading = true;
-  List<Map<String, dynamic>> _holdings = [];
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -28,7 +27,8 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
-    _slideAnimation = Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
     );
     _loadPortfolio();
@@ -43,12 +43,10 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
   Future<void> _loadPortfolio() async {
     setState(() => _loading = true);
     try {
-      final data = await PortfolioService.getUserPortfolio();
+      final portfolio =
+          await EnhancedPortfolioService.getPortfolioWithLivePrices();
       setState(() {
-        _totalValue = (data['totalValue'] ?? 0.0).toDouble();
-        _totalGain = (data['totalGain'] ?? 0.0).toDouble();
-        _gainPercentage = (data['gainPercentage'] ?? 0.0).toDouble();
-        _holdings = List<Map<String, dynamic>>.from(data['holdings'] ?? []);
+        _portfolio = portfolio;
         _loading = false;
       });
       _animationController.forward();
@@ -117,7 +115,8 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF6B35)),
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(Color(0xFFFF6B35)),
                   ),
                   SizedBox(height: 16),
                   Text(
@@ -163,7 +162,8 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
                           child: Column(
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text(
                                     'Total Portfolio Value',
@@ -173,7 +173,8 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
                                     ),
                                   ),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 4),
                                     decoration: BoxDecoration(
                                       color: Colors.white.withOpacity(0.2),
                                       borderRadius: BorderRadius.circular(12),
@@ -191,7 +192,7 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                '₹${_totalValue.toStringAsFixed(2)}',
+                                '₹${(_portfolio?.totalValue ?? 0.0).toStringAsFixed(2)}',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 32,
@@ -203,9 +204,10 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 6),
                                     decoration: BoxDecoration(
-                                      color: _totalGain >= 0 
+                                      color: (_portfolio?.totalGain ?? 0.0) >= 0
                                           ? Colors.green.withOpacity(0.2)
                                           : Colors.red.withOpacity(0.2),
                                       borderRadius: BorderRadius.circular(12),
@@ -214,15 +216,25 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Icon(
-                                          _totalGain >= 0 ? Icons.trending_up : Icons.trending_down,
-                                          color: _totalGain >= 0 ? Colors.green : Colors.red,
+                                          (_portfolio?.totalGain ?? 0.0) >= 0
+                                              ? Icons.trending_up
+                                              : Icons.trending_down,
+                                          color:
+                                              (_portfolio?.totalGain ?? 0.0) >=
+                                                      0
+                                                  ? Colors.green
+                                                  : Colors.red,
                                           size: 16,
                                         ),
                                         const SizedBox(width: 4),
                                         Text(
-                                          '${_totalGain >= 0 ? '+' : ''}₹${_totalGain.abs().toStringAsFixed(2)}',
+                                          '${(_portfolio?.totalGain ?? 0.0) >= 0 ? '+' : ''}₹${(_portfolio?.totalGain ?? 0.0).abs().toStringAsFixed(2)}',
                                           style: TextStyle(
-                                            color: _totalGain >= 0 ? Colors.green : Colors.red,
+                                            color: (_portfolio?.totalGain ??
+                                                        0.0) >=
+                                                    0
+                                                ? Colors.green
+                                                : Colors.red,
                                             fontSize: 14,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -232,9 +244,11 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
-                                    '(${_gainPercentage.toStringAsFixed(1)}%)',
+                                    '(${(_portfolio?.gainPercentage ?? 0.0).toStringAsFixed(1)}%)',
                                     style: TextStyle(
-                                      color: _totalGain >= 0 ? Colors.green : Colors.red,
+                                      color: (_portfolio?.totalGain ?? 0.0) >= 0
+                                          ? Colors.green
+                                          : Colors.red,
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -260,7 +274,7 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
                                 ),
                               ),
                               Text(
-                                '${_holdings.length} stocks',
+                                '${_portfolio?.holdings.length ?? 0} stocks',
                                 style: const TextStyle(
                                   color: Colors.grey,
                                   fontSize: 14,
@@ -273,7 +287,7 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
                         const SizedBox(height: 16),
 
                         // Holdings List
-                        if (_holdings.isEmpty)
+                        if (_portfolio?.holdings.isEmpty ?? true)
                           Container(
                             margin: const EdgeInsets.all(20),
                             padding: const EdgeInsets.all(40),
@@ -321,9 +335,9 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             padding: const EdgeInsets.symmetric(horizontal: 20),
-                            itemCount: _holdings.length,
+                            itemCount: _portfolio?.holdings.length ?? 0,
                             itemBuilder: (context, index) {
-                              final holding = _holdings[index];
+                              final holding = _portfolio!.holdings[index];
                               return _buildHoldingCard(holding);
                             },
                           ),
@@ -331,7 +345,7 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
                         const SizedBox(height: 20),
 
                         // Portfolio Performance
-                        if (_holdings.isNotEmpty)
+                        if (_portfolio?.holdings.isNotEmpty ?? false)
                           Container(
                             margin: const EdgeInsets.symmetric(horizontal: 20),
                             padding: const EdgeInsets.all(20),
@@ -354,7 +368,8 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
                                     Container(
                                       padding: const EdgeInsets.all(8),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFFFF6B35).withOpacity(0.2),
+                                        color: const Color(0xFFFF6B35)
+                                            .withOpacity(0.2),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: const Icon(
@@ -375,13 +390,31 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
                                   ],
                                 ),
                                 const SizedBox(height: 16),
-                                _buildPerformanceRow('Total Invested', '₹${(_totalValue - _totalGain).toStringAsFixed(2)}', Icons.account_balance_wallet),
-                                _buildPerformanceRow('Current Value', '₹${_totalValue.toStringAsFixed(2)}', Icons.trending_up),
-                                _buildPerformanceRow('Total Gain/Loss', '${_totalGain >= 0 ? '+' : ''}₹${_totalGain.toStringAsFixed(2)}', 
-                                    _totalGain >= 0 ? Icons.trending_up : Icons.trending_down,
-                                    color: _totalGain >= 0 ? Colors.green : Colors.red),
-                                _buildPerformanceRow('Gain Percentage', '${_gainPercentage.toStringAsFixed(1)}%', Icons.percent,
-                                    color: _gainPercentage >= 0 ? Colors.green : Colors.red),
+                                _buildPerformanceRow(
+                                    'Total Invested',
+                                    '₹${((_portfolio?.totalValue ?? 0.0) - (_portfolio?.totalGain ?? 0.0)).toStringAsFixed(2)}',
+                                    Icons.account_balance_wallet),
+                                _buildPerformanceRow(
+                                    'Current Value',
+                                    '₹${(_portfolio?.totalValue ?? 0.0).toStringAsFixed(2)}',
+                                    Icons.trending_up),
+                                _buildPerformanceRow(
+                                    'Total Gain/Loss',
+                                    '${(_portfolio?.totalGain ?? 0.0) >= 0 ? '+' : ''}₹${(_portfolio?.totalGain ?? 0.0).toStringAsFixed(2)}',
+                                    (_portfolio?.totalGain ?? 0.0) >= 0
+                                        ? Icons.trending_up
+                                        : Icons.trending_down,
+                                    color: (_portfolio?.totalGain ?? 0.0) >= 0
+                                        ? Colors.green
+                                        : Colors.red),
+                                _buildPerformanceRow(
+                                    'Gain Percentage',
+                                    '${(_portfolio?.gainPercentage ?? 0.0).toStringAsFixed(1)}%',
+                                    Icons.percent,
+                                    color:
+                                        (_portfolio?.gainPercentage ?? 0.0) >= 0
+                                            ? Colors.green
+                                            : Colors.red),
                               ],
                             ),
                           ),
@@ -396,9 +429,9 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
     );
   }
 
-  Widget _buildHoldingCard(Map<String, dynamic> holding) {
-    final currentValue = (holding['shares'] as int) * (holding['currentPrice'] as double);
-    final avgValue = (holding['shares'] as int) * (holding['avgPrice'] as double);
+  Widget _buildHoldingCard(StockHolding holding) {
+    final currentValue = holding.totalValue;
+    final avgValue = holding.shares * holding.avgPrice;
     final gain = currentValue - avgValue;
     final gainPercentage = avgValue > 0 ? (gain / avgValue) * 100 : 0;
 
@@ -429,7 +462,7 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
                 ),
                 child: Center(
                   child: Text(
-                    (holding['symbol'] as String).isNotEmpty ? holding['symbol'][0] : '?',
+                    holding.symbol.isNotEmpty ? holding.symbol[0] : '?',
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -444,7 +477,7 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      holding['symbol'],
+                      holding.symbol,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -452,7 +485,7 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
                       ),
                     ),
                     Text(
-                      holding['name'] ?? '',
+                      holding.name,
                       style: const TextStyle(
                         fontSize: 14,
                         color: Colors.grey,
@@ -475,9 +508,10 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: gain >= 0 
+                      color: gain >= 0
                           ? Colors.green.withOpacity(0.2)
                           : Colors.red.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(8),
@@ -510,9 +544,11 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildHoldingDetail('Shares', '${holding['shares']}'),
-              _buildHoldingDetail('Avg Price', '₹${(holding['avgPrice'] as double).toStringAsFixed(2)}'),
-              _buildHoldingDetail('Current', '₹${(holding['currentPrice'] as double).toStringAsFixed(2)}'),
+              _buildHoldingDetail('Shares', '${holding.shares}'),
+              _buildHoldingDetail(
+                  'Avg Price', '₹${holding.avgPrice.toStringAsFixed(2)}'),
+              _buildHoldingDetail(
+                  'Current', '₹${holding.currentPrice.toStringAsFixed(2)}'),
             ],
           ),
         ],
@@ -543,7 +579,8 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
     );
   }
 
-  Widget _buildPerformanceRow(String label, String value, IconData icon, {Color? color}) {
+  Widget _buildPerformanceRow(String label, String value, IconData icon,
+      {Color? color}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -574,6 +611,6 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
           ),
         ],
       ),
-          );
+    );
   }
 }
