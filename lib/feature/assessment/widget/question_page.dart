@@ -27,7 +27,7 @@ class _QuestionPageState extends State<QuestionPage> {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: const Color(0xFF1A1A1A),
+          color: const Colors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -99,7 +99,7 @@ class _QuestionPageState extends State<QuestionPage> {
                   decoration: BoxDecoration(
                                        color: isSelected 
                        ? const Color(0xFF4CAF50).withOpacity(0.2)
-                       : const Color(0xFF0F0F0F),
+                       : const Colors.white,
                    borderRadius: BorderRadius.circular(16),
                    border: Border.all(
                      color: isSelected 
@@ -165,7 +165,7 @@ class _QuestionPageState extends State<QuestionPage> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF0F0F0F),
+                color: const Colors.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Colors.grey.shade800),
               ),

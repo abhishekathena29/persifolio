@@ -21,20 +21,20 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: false,
-        brightness: Brightness.dark,
+        brightness: Brightness.light,
         primarySwatch: Colors.teal,
         primaryColor: const Color(0xFF4CAF50),
-        scaffoldBackgroundColor: const Color(0xFF0F0F0F),
+        scaffoldBackgroundColor: const Color(0xFFFAFAFA),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF1A1A1A),
+          backgroundColor: Colors.white,
           elevation: 0,
           centerTitle: true,
           titleTextStyle: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Colors.black,
           ),
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: IconThemeData(color: Colors.black),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
@@ -52,23 +52,23 @@ class MyApp extends StatelessWidget {
           ),
         ),
         cardTheme: CardTheme(
-          elevation: 0,
+          elevation: 2,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          color: const Color(0xFF1A1A1A),
-          shadowColor: Colors.black.withOpacity(0.3),
+          color: Colors.white,
+          shadowColor: Colors.black.withOpacity(0.1),
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: const Color(0xFF1A1A1A),
+          fillColor: Colors.grey.shade50,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(color: Colors.grey.shade300),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Colors.grey.shade800),
+            borderSide: BorderSide(color: Colors.grey.shade300),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
@@ -77,46 +77,46 @@ class MyApp extends StatelessWidget {
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           hintStyle: TextStyle(color: Colors.grey.shade500),
-          labelStyle: const TextStyle(color: Colors.grey),
+          labelStyle: TextStyle(color: Colors.grey.shade700),
         ),
         textTheme: const TextTheme(
           headlineLarge: TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Colors.black,
           ),
           headlineMedium: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Colors.black,
           ),
           headlineSmall: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Colors.black,
           ),
           titleLarge: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600,
-            color: Colors.white,
+            color: Colors.black,
           ),
           titleMedium: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: Colors.white,
+            color: Colors.black,
           ),
           titleSmall: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Colors.white,
+            color: Colors.black,
           ),
           bodyLarge: TextStyle(
             fontSize: 16,
-            color: Colors.white,
+            color: Colors.black87,
           ),
           bodyMedium: TextStyle(
             fontSize: 14,
-            color: Colors.white,
+            color: Colors.black87,
           ),
           bodySmall: TextStyle(
             fontSize: 12,
@@ -124,40 +124,40 @@ class MyApp extends StatelessWidget {
           ),
         ),
         iconTheme: const IconThemeData(
-          color: Colors.white,
+          color: Colors.black87,
         ),
         dividerTheme: DividerThemeData(
-          color: Colors.grey.shade800,
+          color: Colors.grey.shade300,
           thickness: 1,
         ),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          backgroundColor: Color(0xFF1A1A1A),
+          backgroundColor: Colors.white,
           selectedItemColor: Color(0xFF4CAF50),
           unselectedItemColor: Colors.grey,
           type: BottomNavigationBarType.fixed,
-          elevation: 0,
+          elevation: 8,
         ),
         dialogTheme: DialogTheme(
-          backgroundColor: const Color(0xFF1A1A1A),
+          backgroundColor: Colors.white,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           titleTextStyle: const TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
-          contentTextStyle: const TextStyle(color: Colors.grey),
+          contentTextStyle: const TextStyle(color: Colors.black87),
         ),
         bottomSheetTheme: const BottomSheetThemeData(
-          backgroundColor: Color(0xFF1A1A1A),
+          backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
         ),
         chipTheme: ChipThemeData(
-          backgroundColor: const Color(0xFF1A1A1A),
+          backgroundColor: Colors.grey.shade100,
           selectedColor: const Color(0xFF4CAF50),
-          labelStyle: const TextStyle(color: Colors.white),
+          labelStyle: const TextStyle(color: Colors.black87),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
@@ -177,11 +177,11 @@ class MyApp extends StatelessWidget {
             return Colors.transparent;
           }),
           checkColor: MaterialStateProperty.all(Colors.white),
-          side: const BorderSide(color: Colors.grey),
+          side: BorderSide(color: Colors.grey.shade400),
         ),
         sliderTheme: SliderThemeData(
           activeTrackColor: const Color(0xFF4CAF50),
-          inactiveTrackColor: Colors.grey.shade800,
+          inactiveTrackColor: Colors.grey.shade300,
           thumbColor: const Color(0xFF4CAF50),
           overlayColor: const Color(0xFF4CAF50).withOpacity(0.2),
         ),
@@ -196,7 +196,7 @@ class MyApp extends StatelessWidget {
             if (states.contains(MaterialState.selected)) {
               return const Color(0xFF4CAF50);
             }
-            return Colors.grey.shade800;
+            return Colors.grey.shade300;
           }),
         ),
         progressIndicatorTheme: const ProgressIndicatorThemeData(

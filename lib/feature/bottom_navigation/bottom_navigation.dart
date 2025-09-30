@@ -72,7 +72,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF1A1A1A),
+          color: const Colors.white,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),

@@ -38,9 +38,9 @@ class _InvestorScoreInfoScreenState extends State<InvestorScoreInfoScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F0F),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: const Colors.white,
         elevation: 0,
         title: const Text(
           'How We Calculate Your Score',
@@ -52,7 +52,7 @@ class _InvestorScoreInfoScreenState extends State<InvestorScoreInfoScreen>
         leading: Container(
           margin: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: const Color(0xFF1A1A1A),
+            color: const Colors.white,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
@@ -85,7 +85,7 @@ class _InvestorScoreInfoScreenState extends State<InvestorScoreInfoScreen>
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Color(0xFF1A1A1A),
+                        Colors.white,
                         Color(0xFF2A2A2A),
                       ],
                     ),
@@ -140,7 +140,7 @@ class _InvestorScoreInfoScreenState extends State<InvestorScoreInfoScreen>
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1A1A1A),
+                    color: const Colors.white,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
@@ -221,7 +221,7 @@ class _InvestorScoreInfoScreenState extends State<InvestorScoreInfoScreen>
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1A1A1A),
+                    color: const Colors.white,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
@@ -263,7 +263,7 @@ class _InvestorScoreInfoScreenState extends State<InvestorScoreInfoScreen>
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF0F0F0F),
+                          color: const Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(color: const Color(0xFF4CAF50).withOpacity(0.3)),
                         ),
@@ -319,7 +319,7 @@ class _InvestorScoreInfoScreenState extends State<InvestorScoreInfoScreen>
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1A1A1A),
+                    color: const Colors.white,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
@@ -382,7 +382,7 @@ class _InvestorScoreInfoScreenState extends State<InvestorScoreInfoScreen>
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1A1A1A).withOpacity(0.5),
+                    color: const Colors.white.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: const Color(0xFF4CAF50).withOpacity(0.3)),
                   ),
@@ -431,7 +431,7 @@ class _InvestorScoreInfoScreenState extends State<InvestorScoreInfoScreen>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F0F0F),
+        color: const Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: color.withOpacity(0.3)),
       ),
@@ -516,7 +516,7 @@ class _InvestorScoreInfoScreenState extends State<InvestorScoreInfoScreen>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F0F0F),
+        color: const Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade800),
       ),

@@ -11,10 +11,10 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F0F),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Profile'),
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: const Colors.white,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -26,7 +26,7 @@ class ProfilePage extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: const Color(0xFF1A1A1A),
+                color: const Colors.white,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -104,7 +104,7 @@ class ProfilePage extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: const Color(0xFF1A1A1A),
+                color: const Colors.white,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Column(
@@ -133,7 +133,7 @@ class ProfilePage extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: const Color(0xFF1A1A1A),
+                color: const Colors.white,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Column(

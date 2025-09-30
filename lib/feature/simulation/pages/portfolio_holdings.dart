@@ -60,7 +60,7 @@ class _PortfolioHoldingsPageState extends State<PortfolioHoldingsPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F0F),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: _isLoading
             ? const Center(
@@ -91,7 +91,7 @@ class _PortfolioHoldingsPageState extends State<PortfolioHoldingsPage>
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF1A1A1A),
+                          color: const Colors.white,
                           borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(24),
                             bottomRight: Radius.circular(24),
@@ -111,7 +111,7 @@ class _PortfolioHoldingsPageState extends State<PortfolioHoldingsPage>
                                 Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF1A1A1A),
+                                    color: const Colors.white,
                                     borderRadius: BorderRadius.circular(12),
                                     boxShadow: [
                                       BoxShadow(
@@ -269,7 +269,7 @@ class _PortfolioHoldingsPageState extends State<PortfolioHoldingsPage>
                                     Container(
                                       padding: const EdgeInsets.all(24),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFF1A1A1A),
+                                        color: const Colors.white,
                                         borderRadius: BorderRadius.circular(20),
                                         boxShadow: [
                                           BoxShadow(
@@ -336,7 +336,7 @@ class _PortfolioHoldingsPageState extends State<PortfolioHoldingsPage>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
+        color: const Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(

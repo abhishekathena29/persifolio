@@ -60,7 +60,7 @@ class _StockDetailPageState extends State<StockDetailPage> with TickerProviderSt
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F0F),
+      backgroundColor: Colors.white,
       body: CustomScrollView(
         slivers: [
           // Custom App Bar
@@ -68,12 +68,12 @@ class _StockDetailPageState extends State<StockDetailPage> with TickerProviderSt
             expandedHeight: 120,
             floating: false,
             pinned: true,
-            backgroundColor: const Color(0xFF1A1A1A),
+            backgroundColor: const Colors.white,
             elevation: 0,
             leading: Container(
               margin: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: const Color(0xFF1A1A1A),
+                color: const Colors.white,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
@@ -120,7 +120,7 @@ class _StockDetailPageState extends State<StockDetailPage> with TickerProviderSt
               Container(
                 margin: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1A1A1A),
+                  color: const Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
@@ -262,7 +262,7 @@ class _StockDetailPageState extends State<StockDetailPage> with TickerProviderSt
                       margin: const EdgeInsets.symmetric(horizontal: 20),
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF1A1A1A),
+                        color: const Colors.white,
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
@@ -311,7 +311,7 @@ class _StockDetailPageState extends State<StockDetailPage> with TickerProviderSt
                       margin: const EdgeInsets.symmetric(horizontal: 20),
                       height: 250,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF1A1A1A),
+                        color: const Colors.white,
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
@@ -390,7 +390,7 @@ class _StockDetailPageState extends State<StockDetailPage> with TickerProviderSt
                       margin: const EdgeInsets.symmetric(horizontal: 20),
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF1A1A1A),
+                        color: const Colors.white,
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
@@ -453,7 +453,7 @@ class _StockDetailPageState extends State<StockDetailPage> with TickerProviderSt
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: const Color(0xFF1A1A1A),
+          color: const Colors.white,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.3),
@@ -605,7 +605,7 @@ class _StockDetailPageState extends State<StockDetailPage> with TickerProviderSt
 
   Widget _buildTradeDialog(BuildContext context, String action, Color color) {
     return Dialog(
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: const Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Container(
         padding: const EdgeInsets.all(24),

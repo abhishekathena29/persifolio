@@ -186,9 +186,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F0F),
+      backgroundColor: const Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: const Colors.white,
         elevation: 0,
         title: Text(
           'Portfolio: ${widget.portfolioScoreName}',
@@ -201,7 +201,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           Container(
             margin: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: const Color(0xFF1A1A1A),
+              color: const Colors.white,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
@@ -221,7 +221,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           Container(
             margin: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: const Color(0xFF1A1A1A),
+              color: const Colors.white,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
@@ -260,7 +260,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Color(0xFF1A1A1A),
+                        Colors.white,
                         Color(0xFF2A2A2A),
                       ],
                     ),
@@ -322,7 +322,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1A1A1A),
+                    color: const Colors.white,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
@@ -368,7 +368,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           painter: DonutChartPainter(
                             sectors: sectors,
                             colors: pieColors,
-                            backgroundColor: const Color(0xFF0F0F0F),
+                            backgroundColor: const Colors.white,
                           ),
                           child: Center(
                             child: Column(
@@ -464,7 +464,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1A1A1A),
+                    color: const Colors.white,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
@@ -518,7 +518,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           return Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF0F0F0F),
+                              color: const Colors.white,
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(color: Colors.grey.shade800),
                             ),
@@ -556,7 +556,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                             Container(
                                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                                               decoration: BoxDecoration(
-                                                color: const Color(0xFF1A1A1A),
+                                                color: const Colors.white,
                                                 borderRadius: BorderRadius.circular(20),
                                                 border: Border.all(color: Colors.grey.shade800),
                                               ),
@@ -611,7 +611,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: const Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: const Text(
           'Enter Investment Amount',
@@ -683,7 +683,7 @@ class DonutChartPainter extends CustomPainter {
   DonutChartPainter({
     required this.sectors,
     required this.colors,
-    this.backgroundColor = const Color(0xFF0F0F0F),
+    this.backgroundColor = const Colors.white,
   });
 
   final List<Map<String, dynamic>> sectors;

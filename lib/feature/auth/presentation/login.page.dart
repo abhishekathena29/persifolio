@@ -39,7 +39,7 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F0F),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: FadeTransition(
           opacity: _fadeAnimation,
@@ -56,7 +56,7 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                   Container(
                     padding: const EdgeInsets.all(32),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1A1A1A),
+                      color: const Colors.white,
                       borderRadius: BorderRadius.circular(24),
                       boxShadow: [
                         BoxShadow(
@@ -107,7 +107,7 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1A1A1A),
+                      color: const Colors.white,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
@@ -222,7 +222,7 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1A1A1A),
+                      color: const Colors.white,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: Colors.grey.shade800),
                     ),
