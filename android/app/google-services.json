@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "104706679185-8jp0pcl77qcb3g29nniiaeuamug8uu8t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.persifolio.app",
+            "certificate_hash": "985fc22bcd1a0e6cfa5a307d13a211ad2603ca52"
+          }
+        },
+        {
           "client_id": "104706679185-iid0v06dd05lm1p7ijt05vgkp97uh5q6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
