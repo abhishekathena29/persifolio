@@ -70,24 +70,6 @@ class _AssessmentPageState extends State<AssessmentPage> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        leading: Container(
-          margin: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: const Color(0xFF1A1A1A),
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Color(0xFF4CAF50)),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ),
       ),
       body: isLoading
           ? const Center(
@@ -217,7 +199,7 @@ class _AssessmentPageState extends State<AssessmentPage> {
                               mp.forEach((u, v) {
                                 totalScore += v;
                               });
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>

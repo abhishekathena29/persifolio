@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:persifolio/feature/bottom_navigation/bottom_navigation.dart';
 import 'package:persifolio/feature/scoring/score_info_page.dart';
+import 'package:persifolio/services/auth_service.dart';
 
 class ScoringPage extends StatelessWidget {
   const ScoringPage({super.key, required this.score});
@@ -126,7 +127,7 @@ class ScoringPage extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     String portfolioType = "";
                     if (score >= 34 && score <= 57) {
                       portfolioType = "Income with Capital Preservation";
@@ -139,12 +140,15 @@ class ScoringPage extends StatelessWidget {
                     } else if (score >= 115 && score <= 125) {
                       portfolioType = "Aggressive Growth";
                     }
+
                     if (portfolioType.isNotEmpty) {
+                      // Save portfolio type to user profile
+                      await AuthService.updateUserPortfolioType(portfolioType);
+
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => BottomNavigationPage(
-                            portfolioScoreName: portfolioType,
+                          builder: (context) => const BottomNavigationPage(
                             initialIndex: 0, // Start with Home tab
                           ),
                         ),

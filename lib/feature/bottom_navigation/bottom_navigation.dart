@@ -5,12 +5,10 @@ import 'package:persifolio/feature/assessment/page/assessment.page.dart';
 import 'package:persifolio/feature/profile/profile_page.dart';
 
 class BottomNavigationPage extends StatefulWidget {
-  final String portfolioScoreName;
   final int initialIndex;
 
   const BottomNavigationPage({
     super.key,
-    required this.portfolioScoreName,
     this.initialIndex = 0,
   });
 
@@ -35,10 +33,10 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
   @override
   Widget build(BuildContext context) {
     List<Widget> pages = [
-      HomePage(portfolioScoreName: widget.portfolioScoreName),
+      HomePage(),
       SimulationHomePage(),
       AssessmentPage(),
-      ProfilePage(portfolioScoreName: widget.portfolioScoreName),
+      ProfilePage(),
     ];
     return Scaffold(
       body: pages.elementAt(_currentIndex),

@@ -166,7 +166,7 @@ class _PortfolioPageState extends State<PortfolioPage>
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text(
-                                    'Total Portfolio Value',
+                                    'Total Available Balance',
                                     style: TextStyle(
                                       color: Colors.white70,
                                       fontSize: 16,

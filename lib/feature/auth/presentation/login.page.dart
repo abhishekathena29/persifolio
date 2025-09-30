@@ -484,7 +484,6 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
       context,
       MaterialPageRoute(
         builder: (context) => const BottomNavigationPage(
-          portfolioScoreName: 'Income with Moderate Growth',
           initialIndex: 0, // Start with Home/Simulation tab
         ),
       ),

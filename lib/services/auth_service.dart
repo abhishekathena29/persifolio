@@ -143,6 +143,8 @@ class AuthService {
       if (!docSnapshot.exists) {
         userData['createdAt'] = FieldValue.serverTimestamp();
         userData['portfolioInitialized'] = false;
+        userData['portfolioType'] = null;
+        userData['assessmentCompleted'] = false;
       }
 
       await userDoc.set(userData, SetOptions(merge: true));
@@ -162,6 +164,21 @@ class AuthService {
     } catch (e) {
       print('Error getting user profile: $e');
       return null;
+    }
+  }
+
+  // Update user portfolio type after assessment
+  static Future<void> updateUserPortfolioType(String portfolioType) async {
+    try {
+      if (currentUser == null) return;
+
+      await _firestore.collection('users').doc(currentUser!.uid).update({
+        'portfolioType': portfolioType,
+        'assessmentCompleted': true,
+        'portfolioAssignedAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      print('Error updating user portfolio type: $e');
     }
   }
 

@@ -1,0 +1,148 @@
+{
+    "portfolios_collection_examples": [
+        {
+            "companyName": "TATA STEEL",
+            "about": "Tata Steel is one of the world's leading steel producers, known for its innovation, sustainability practices, and diversified product portfolio. The company has a strong presence in India and Europe, with a focus on value-added products and services. Tata Steel's robust financial performance, ongoing expansion plans, and commitment to reducing carbon emissions make it a solid investment in the industrial sector. As global demand for steel continues to rise, particularly in infrastructure and automotive sectors, Tata Steel is well-positioned to benefit from these trends.",
+            "portfolioName": "Growth with Income",
+            "sectorSplit": "Equity/Stocks",
+            "where": "Developed markets",
+            "diversification": 3.5
+        },
+        {
+            "companyName": "RELIANCE INDUSTRIES",
+            "about": "Reliance Industries Limited is India's largest private sector company, with businesses spanning energy, petrochemicals, oil & gas, telecom, and retail. The company has shown remarkable growth in digital services through Jio and retail expansion through Reliance Retail. With strong fundamentals, diversified revenue streams, and strategic investments in green energy, RIL represents a cornerstone investment in the Indian economy.",
+            "portfolioName": "Growth with Income",
+            "sectorSplit": "Equity/Stocks",
+            "where": "Blue chip stocks",
+            "diversification": 4.2
+        },
+        {
+            "companyName": "INFOSYS",
+            "about": "Infosys is a global leader in next-generation digital services and consulting. The company helps clients navigate their digital transformation journey with expertise in cloud, data analytics, and artificial intelligence. With a strong track record of consistent growth, excellent corporate governance, and a robust client base across multiple geographies, Infosys offers stable returns in the technology sector.",
+            "portfolioName": "Growth with Income",
+            "sectorSplit": "Equity/Stocks",
+            "where": "Nifty index stocks",
+            "diversification": 3.8
+        },
+        {
+            "companyName": "HDFC BANK",
+            "about": "HDFC Bank is India's largest private sector bank and one of the most valuable banking franchises globally. Known for its superior asset quality, strong risk management, and consistent profitability, the bank has a diversified portfolio spanning retail, wholesale, and treasury operations. With extensive digital banking capabilities and a strong deposit franchise, HDFC Bank represents stability in the financial sector.",
+            "portfolioName": "Growth with Income",
+            "sectorSplit": "Equity/Stocks",
+            "where": "Blue chip stocks",
+            "diversification": 4.0
+        },
+        {
+            "companyName": "GOVERNMENT BONDS",
+            "about": "Indian Government Securities offer sovereign guarantee and stable returns. These bonds are issued by the Government of India and are considered the safest investment option with predictable income streams. They provide portfolio stability and act as a hedge against market volatility while offering tax benefits under certain conditions.",
+            "portfolioName": "Growth with Income",
+            "sectorSplit": "Long term bonds",
+            "where": "Government bonds",
+            "diversification": 15.0
+        },
+        {
+            "companyName": "CORPORATE BONDS AAA",
+            "about": "High-grade corporate bonds from top-rated Indian companies provide higher yields than government securities while maintaining relatively low risk. These bonds are issued by companies with strong credit ratings and offer regular interest payments with capital preservation at maturity.",
+            "portfolioName": "Growth with Income",
+            "sectorSplit": "Long term bonds",
+            "where": "Corporate bonds",
+            "diversification": 12.0
+        },
+        {
+            "companyName": "HIGH YIELD BONDS",
+            "about": "High yield corporate bonds offer attractive returns for investors willing to take on slightly higher credit risk. These bonds are issued by companies with good fundamentals but may have higher leverage or operate in cyclical industries. They provide enhanced income generation for the portfolio.",
+            "portfolioName": "Growth with Income",
+            "sectorSplit": "Long term bonds",
+            "where": "High Yield bonds",
+            "diversification": 15.0
+        },
+        {
+            "companyName": "GOLD ETF",
+            "about": "Gold Exchange Traded Funds provide exposure to gold prices without the hassle of physical storage. Gold serves as a hedge against inflation and currency devaluation while providing portfolio diversification. It acts as a safe haven asset during market turbulence and geopolitical uncertainty.",
+            "portfolioName": "Growth with Income",
+            "sectorSplit": "Commodities",
+            "where": "Gold",
+            "diversification": 5.0
+        },
+        {
+            "companyName": "CRUDE OIL FUTURES",
+            "about": "Crude oil futures provide exposure to energy markets and serve as an inflation hedge. Oil prices are influenced by global supply-demand dynamics, geopolitical factors, and economic growth. This commodity exposure helps diversify the portfolio beyond traditional asset classes.",
+            "portfolioName": "Growth with Income",
+            "sectorSplit": "Commodities",
+            "where": "Crude oil",
+            "diversification": 3.0
+        },
+        {
+            "companyName": "FIXED DEPOSITS",
+            "about": "Bank Fixed Deposits offer guaranteed returns with capital protection. They provide liquidity and serve as the cash component of the portfolio for emergency needs and tactical allocation opportunities. FDs offer predictable income with minimal risk.",
+            "portfolioName": "Growth with Income",
+            "sectorSplit": "Cash",
+            "where": "Fixed deposits",
+            "diversification": 8.0
+        },
+        {
+            "companyName": "TESLA INC",
+            "about": "Tesla is the world's leading electric vehicle manufacturer and clean energy company. With innovative technology in autonomous driving, energy storage, and solar panels, Tesla is at the forefront of the sustainable transportation revolution. The company's strong brand, expanding global presence, and continuous innovation make it a high-growth investment in the EV sector.",
+            "portfolioName": "Aggressive Growth",
+            "sectorSplit": "Equity/Stocks",
+            "where": "Small cap stocks",
+            "diversification": 8.0
+        },
+        {
+            "companyName": "ZOMATO",
+            "about": "Zomato is India's leading food delivery and restaurant discovery platform. The company has shown strong growth in the digital food services market and is expanding into grocery delivery and other verticals. With the growing trend of online food ordering and digital payments, Zomato represents high growth potential in the consumer technology space.",
+            "portfolioName": "Aggressive Growth",
+            "sectorSplit": "Equity/Stocks",
+            "where": "IPOs",
+            "diversification": 5.5
+        },
+        {
+            "companyName": "STARTUP FUND",
+            "about": "Angel funding in early-stage startups offers the potential for exponential returns. This allocation focuses on innovative companies in technology, fintech, healthtech, and other emerging sectors. While carrying higher risk, successful startups can provide portfolio-changing returns for aggressive growth investors.",
+            "portfolioName": "Aggressive Growth",
+            "sectorSplit": "Angel funding",
+            "where": "Startups",
+            "diversification": 20.0
+        },
+        {
+            "companyName": "BITCOIN ETF",
+            "about": "Bitcoin ETF provides regulated exposure to cryptocurrency markets. As a digital asset, Bitcoin offers portfolio diversification and potential hedge against currency debasement. While highly volatile, Bitcoin has shown strong long-term appreciation and increasing institutional adoption.",
+            "portfolioName": "Aggressive Growth",
+            "sectorSplit": "Commodities",
+            "where": "Cryptocurrency",
+            "diversification": 10.0
+        }
+    ],
+    "instructions": {
+        "collection_name": "portfolios",
+        "setup_steps": [
+            "1. Create a Firestore collection named 'portfolios'",
+            "2. Add each company as a separate document",
+            "3. Each document represents one company/investment in a portfolio",
+            "4. Companies with the same 'portfolioName' belong to the same portfolio",
+            "5. Companies are grouped by 'sectorSplit' for pie chart display",
+            "6. The 'diversification' field represents the percentage allocation",
+            "7. Set up proper Firestore security rules to allow read access"
+        ],
+        "portfolio_types": [
+            "Income with Capital Preservation",
+            "Income with Moderate Growth",
+            "Growth with Income",
+            "Growth",
+            "Aggressive Growth"
+        ],
+        "sector_splits": [
+            "Cash",
+            "Commodities",
+            "Long term bonds",
+            "Equity/Stocks",
+            "Angel funding"
+        ],
+        "security_rules": "rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /portfolios/{document} {\n      allow read: if true;\n      allow write: if false;\n    }\n    match /users/{userId} {\n      allow read, write: if request.auth != null && request.auth.uid == userId;\n    }\n  }\n}",
+        "query_examples": {
+            "get_user_portfolio": "portfolios.where('portfolioName', '==', userPortfolioType)",
+            "group_by_sector": "Group companies by 'sectorSplit' field",
+            "calculate_sector_percentage": "Sum 'diversification' values for each sector"
+        }
+    }
+}
