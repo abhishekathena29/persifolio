@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:persifolio/services/alpha_vantage_service.dart';
 import 'package:persifolio/services/enhanced_portfolio_service.dart';
+import 'package:persifolio/services/stock_price_cache_service.dart';
 import 'package:persifolio/models/portfolio_models.dart';
 import 'package:persifolio/feature/simulation/pages/trade_page.dart';
 import 'dart:math' as math;
@@ -41,7 +42,36 @@ class _StockDetailPageState extends State<StockDetailPage>
     );
     _loadChart();
     _loadCurrentHolding();
+    _refreshStockPrice(); // Fetch and cache current price when page opens
     _animationController.forward();
+  }
+
+  // Fetch and cache current stock price when user opens the detail page
+  Future<void> _refreshStockPrice() async {
+    try {
+      // Force refresh to get latest complete stock data from API
+      final quote = await StockPriceCacheService.getStockPrice(
+        widget.stock['symbol'],
+        forceRefresh: true,
+      );
+      if (quote != null && mounted) {
+        setState(() {
+          // Update all stock data from API
+          widget.stock['price'] = quote['price'];
+          widget.stock['change'] = quote['change'];
+          widget.stock['changePercent'] = quote['changePercent'];
+          widget.stock['isPositive'] = quote['isPositive'];
+          widget.stock['previousClose'] = quote['previousClose'];
+          widget.stock['open'] = quote['open'];
+          widget.stock['high'] = quote['high'];
+          widget.stock['low'] = quote['low'];
+          widget.stock['volume'] = quote['volume'];
+        });
+      }
+    } catch (e) {
+      print('Error refreshing stock price: $e');
+      // Keep existing price if refresh fails
+    }
   }
 
   @override
@@ -78,8 +108,10 @@ class _StockDetailPageState extends State<StockDetailPage>
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F0F),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: CustomScrollView(
         slivers: [
           // Custom App Bar
@@ -87,16 +119,18 @@ class _StockDetailPageState extends State<StockDetailPage>
             expandedHeight: 120,
             floating: false,
             pinned: true,
-            backgroundColor: const Color(0xFF1A1A1A),
+            backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
             elevation: 0,
             leading: Container(
               margin: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: const Color(0xFF1A1A1A),
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
+                    color: isDarkMode
+                        ? Colors.black.withOpacity(0.3)
+                        : Colors.grey.withOpacity(0.2),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -116,16 +150,16 @@ class _StockDetailPageState extends State<StockDetailPage>
                   children: [
                     Text(
                       widget.stock['symbol'],
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
                       ),
                     ),
                     Text(
                       widget.stock['name'],
-                      style: const TextStyle(
-                        color: Colors.grey,
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodySmall?.color,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -135,27 +169,6 @@ class _StockDetailPageState extends State<StockDetailPage>
               ),
               titlePadding: const EdgeInsets.only(left: 70, bottom: 16),
             ),
-            actions: [
-              Container(
-                margin: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1A1A1A),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.favorite_border,
-                      color: Color(0xFFFF6B35)),
-                  onPressed: () {},
-                ),
-              ),
-            ],
           ),
 
           // Content
@@ -205,10 +218,13 @@ class _StockDetailPageState extends State<StockDetailPage>
                                     const SizedBox(height: 8),
                                     Text(
                                       '₹${widget.stock['price'].toStringAsFixed(2)}',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 36,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                       ),
                                     ),
                                   ],
@@ -221,10 +237,13 @@ class _StockDetailPageState extends State<StockDetailPage>
                                   color: Colors.white.withOpacity(0.2),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                child: const Text(
+                                child: Text(
                                   'NSE/BSE',
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                     fontWeight: FontWeight.w600,
                                     fontSize: 12,
                                   ),
@@ -292,11 +311,15 @@ class _StockDetailPageState extends State<StockDetailPage>
                       margin: const EdgeInsets.symmetric(horizontal: 20),
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF1A1A1A),
+                        color: isDarkMode
+                            ? const Color(0xFF1A1A1A)
+                            : Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
+                            color: isDarkMode
+                                ? Colors.black.withOpacity(0.2)
+                                : Colors.grey.withOpacity(0.1),
                             blurRadius: 10,
                             offset: const Offset(0, 2),
                           ),
@@ -325,7 +348,10 @@ class _StockDetailPageState extends State<StockDetailPage>
                                 style: TextStyle(
                                   color: _selectedTimeframe == index
                                       ? Colors.white
-                                      : Colors.grey,
+                                      : Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.color,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14,
                                 ),
@@ -343,11 +369,15 @@ class _StockDetailPageState extends State<StockDetailPage>
                       margin: const EdgeInsets.symmetric(horizontal: 20),
                       height: 250,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF1A1A1A),
+                        color: isDarkMode
+                            ? const Color(0xFF1A1A1A)
+                            : Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
+                            color: isDarkMode
+                                ? Colors.black.withOpacity(0.2)
+                                : Colors.grey.withOpacity(0.1),
                             blurRadius: 10,
                             offset: const Offset(0, 2),
                           ),
@@ -400,12 +430,15 @@ class _StockDetailPageState extends State<StockDetailPage>
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const Text(
+                                      Text(
                                         'Price Chart',
                                         style: TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.white,
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.color,
                                         ),
                                       ),
                                       const SizedBox(height: 16),
@@ -424,11 +457,15 @@ class _StockDetailPageState extends State<StockDetailPage>
                       margin: const EdgeInsets.symmetric(horizontal: 20),
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF1A1A1A),
+                        color: isDarkMode
+                            ? const Color(0xFF1A1A1A)
+                            : Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
+                            color: isDarkMode
+                                ? Colors.black.withOpacity(0.2)
+                                : Colors.grey.withOpacity(0.1),
                             blurRadius: 10,
                             offset: const Offset(0, 2),
                           ),
@@ -453,12 +490,15 @@ class _StockDetailPageState extends State<StockDetailPage>
                                 ),
                               ),
                               const SizedBox(width: 12),
-                              const Text(
+                              Text(
                                 'Stock Information',
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                 ),
                               ),
                             ],
@@ -503,10 +543,14 @@ class _StockDetailPageState extends State<StockDetailPage>
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: const Color(0xFF1A1A1A),
+          color: isDarkMode
+              ? const Color(0xFF1A1A1A)
+              : Theme.of(context).cardColor,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: isDarkMode
+                  ? Colors.black.withOpacity(0.3)
+                  : Colors.grey.withOpacity(0.2),
               blurRadius: 10,
               offset: const Offset(0, -2),
             ),
@@ -541,8 +585,9 @@ class _StockDetailPageState extends State<StockDetailPage>
                           const SizedBox(height: 4),
                           Text(
                             '${_currentHolding!.shares} shares',
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -562,8 +607,8 @@ class _StockDetailPageState extends State<StockDetailPage>
                       children: [
                         Text(
                           '₹${_currentHolding!.totalValue.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -715,10 +760,10 @@ class _StockDetailPageState extends State<StockDetailPage>
           ),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: Colors.white,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
             ),
           ),
         ],

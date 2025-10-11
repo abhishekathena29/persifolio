@@ -13,12 +13,12 @@ class QuestionNavigationButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-             decoration: BoxDecoration(
-         color: const Color(0xFF4CAF50),
-         borderRadius: BorderRadius.circular(16),
-         boxShadow: [
-           BoxShadow(
-             color: const Color(0xFF4CAF50).withOpacity(0.3),
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).primaryColor.withOpacity(0.3),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

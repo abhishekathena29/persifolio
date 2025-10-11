@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:persifolio/services/alpha_vantage_service.dart';
 import 'package:persifolio/services/enhanced_portfolio_service.dart';
 import 'package:persifolio/feature/simulation/pages/stock_detail.dart';
-import 'package:persifolio/feature/simulation/pages/transaction_history.dart';
 import 'package:persifolio/feature/simulation/pages/portfolio.dart';
 
 class SimulationHomePage extends StatefulWidget {
@@ -14,11 +13,9 @@ class SimulationHomePage extends StatefulWidget {
 
 class _SimulationHomePageState extends State<SimulationHomePage>
     with TickerProviderStateMixin {
-  double _portfolioValue = 10000.0;
-  double _totalGain = 0.0;
-  double _gainPercentage = 0.0;
+  double _availableBalance = 100000.0;
+  double _totalPortfolioValue = 100000.0;
   bool _isLoading = true;
-  Map<String, dynamic>? _userProfile;
   List<Map<String, dynamic>> _topStocks = [];
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -49,13 +46,6 @@ class _SimulationHomePageState extends State<SimulationHomePage>
 
   Future<void> _loadInitialData() async {
     try {
-      // Set default profile for demo
-      _userProfile = {
-        'name': 'Investor',
-        'email': 'demo@example.com',
-        'photoUrl': '',
-      };
-
       // Load portfolio data
       await _loadPortfolioData();
 
@@ -205,9 +195,8 @@ class _SimulationHomePageState extends State<SimulationHomePage>
       final portfolio = await EnhancedPortfolioService.getPortfolio();
       if (portfolio != null) {
         setState(() {
-          _portfolioValue = portfolio.totalValue;
-          _totalGain = portfolio.totalGain;
-          _gainPercentage = portfolio.gainPercentage;
+          _availableBalance = portfolio.cashBalance;
+          _totalPortfolioValue = portfolio.totalValue;
         });
       }
     } catch (e) {
@@ -258,23 +247,25 @@ class _SimulationHomePageState extends State<SimulationHomePage>
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F0F),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: _isLoading
-            ? const Center(
+            ? Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator(
+                    const CircularProgressIndicator(
                       valueColor:
                           AlwaysStoppedAnimation<Color>(Color(0xFFFF6B35)),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     Text(
                       'Loading simulation data...',
                       style: TextStyle(
-                        color: Colors.grey,
+                        color: Theme.of(context).textTheme.bodySmall?.color,
                         fontSize: 16,
                       ),
                     ),
@@ -292,14 +283,16 @@ class _SimulationHomePageState extends State<SimulationHomePage>
                         Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF1A1A1A),
+                            color: Theme.of(context).cardColor,
                             borderRadius: const BorderRadius.only(
                               bottomLeft: Radius.circular(24),
                               bottomRight: Radius.circular(24),
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
+                                color: isDarkMode
+                                    ? Colors.black.withOpacity(0.3)
+                                    : Colors.grey.withOpacity(0.2),
                                 blurRadius: 20,
                                 offset: const Offset(0, 4),
                               ),
@@ -315,21 +308,39 @@ class _SimulationHomePageState extends State<SimulationHomePage>
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const Text(
+                                      Text(
                                         'Available Balance',
                                         style: TextStyle(
                                           fontSize: 14,
-                                          color: Colors.grey,
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.color,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        '₹${_portfolioValue.toStringAsFixed(2)}',
-                                        style: const TextStyle(
+                                        '₹${_availableBalance.toStringAsFixed(2)}',
+                                        style: TextStyle(
                                           fontSize: 32,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.white,
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.color,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Total: ₹${_totalPortfolioValue.toStringAsFixed(2)}',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.color,
+                                          fontWeight: FontWeight.w400,
                                         ),
                                       ),
                                     ],
@@ -354,30 +365,6 @@ class _SimulationHomePageState extends State<SimulationHomePage>
                                           ),
                                           child: const Icon(
                                             Icons.account_balance_wallet,
-                                            color: Color(0xFFFF6B35),
-                                            size: 24,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      GestureDetector(
-                                        onTap: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const TransactionHistoryPage(),
-                                          ),
-                                        ),
-                                        child: Container(
-                                          padding: const EdgeInsets.all(8),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFFFF6B35)
-                                                .withOpacity(0.2),
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          ),
-                                          child: const Icon(
-                                            Icons.history,
                                             color: Color(0xFFFF6B35),
                                             size: 24,
                                           ),
@@ -413,19 +400,31 @@ class _SimulationHomePageState extends State<SimulationHomePage>
                                 ),
                               ),
                               const SizedBox(height: 12),
-                              const Row(
+                              Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Text('16',
                                       style: TextStyle(
-                                          color: Colors.grey, fontSize: 12)),
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.color,
+                                          fontSize: 12)),
                                   Text('23',
                                       style: TextStyle(
-                                          color: Colors.grey, fontSize: 12)),
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.color,
+                                          fontSize: 12)),
                                   Text('30',
                                       style: TextStyle(
-                                          color: Colors.grey, fontSize: 12)),
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.color,
+                                          fontSize: 12)),
                                 ],
                               ),
                             ],
@@ -440,12 +439,15 @@ class _SimulationHomePageState extends State<SimulationHomePage>
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
+                              Text(
                                 'Market Overview',
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                 ),
                               ),
                               Container(
@@ -506,6 +508,8 @@ class _SimulationHomePageState extends State<SimulationHomePage>
   }
 
   Widget _buildStockCard(Map<String, dynamic> stock) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
@@ -517,11 +521,13 @@ class _SimulationHomePageState extends State<SimulationHomePage>
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFF1A1A1A),
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: isDarkMode
+                  ? Colors.black.withOpacity(0.2)
+                  : Colors.grey.withOpacity(0.1),
               blurRadius: 10,
               offset: const Offset(0, 2),
             ),
@@ -556,18 +562,18 @@ class _SimulationHomePageState extends State<SimulationHomePage>
                 children: [
                   Text(
                     stock['symbol'],
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
                   Text(
                     stock['name'] ??
                         AlphaVantageService.getStockName(stock['symbol']),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey,
+                      color: Theme.of(context).textTheme.bodySmall?.color,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -580,10 +586,10 @@ class _SimulationHomePageState extends State<SimulationHomePage>
               children: [
                 Text(
                   '₹${(stock['price'] as num).toStringAsFixed(2)}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
                 ),
                 Container(
@@ -679,15 +685,17 @@ class _StockSearchDelegate extends SearchDelegate<Map<String, dynamic>?> {
 
   Widget _buildList(BuildContext context) {
     if (query.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search, size: 48, color: Colors.grey),
-            SizedBox(height: 16),
+            Icon(Icons.search,
+                size: 48, color: Theme.of(context).textTheme.bodySmall?.color),
+            const SizedBox(height: 16),
             Text(
               'Type to search NSE/BSE stocks',
-              style: TextStyle(color: Colors.grey),
+              style: TextStyle(
+                  color: Theme.of(context).textTheme.bodySmall?.color),
             ),
           ],
         ),
@@ -697,15 +705,17 @@ class _StockSearchDelegate extends SearchDelegate<Map<String, dynamic>?> {
       return const Center(child: CircularProgressIndicator());
     }
     if (_results.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search_off, size: 48, color: Colors.grey),
-            SizedBox(height: 16),
+            Icon(Icons.search_off,
+                size: 48, color: Theme.of(context).textTheme.bodySmall?.color),
+            const SizedBox(height: 16),
             Text(
               'No results found',
-              style: TextStyle(color: Colors.grey),
+              style: TextStyle(
+                  color: Theme.of(context).textTheme.bodySmall?.color),
             ),
           ],
         ),

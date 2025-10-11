@@ -22,16 +22,20 @@ class _QuestionPageState extends State<QuestionPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: const Color(0xFF1A1A1A),
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: isDarkMode
+                  ? Colors.black.withOpacity(0.3)
+                  : Colors.grey.withOpacity(0.15),
               blurRadius: 10,
               offset: const Offset(0, 2),
             ),
@@ -46,35 +50,35 @@ class _QuestionPageState extends State<QuestionPage> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF4CAF50).withOpacity(0.2),
+                    color: Theme.of(context).primaryColor.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                                     child: const Icon(
-                     Icons.quiz,
-                     color: Color(0xFF4CAF50),
+                  child: Icon(
+                    Icons.quiz,
+                    color: Theme.of(context).primaryColor,
                     size: 20,
                   ),
                 ),
                 const SizedBox(width: 12),
-                const Text(
+                Text(
                   'Question',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Colors.grey,
+                    color: Theme.of(context).textTheme.bodySmall?.color,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Question Text
             Text(
               widget.question.title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 height: 1.4,
               ),
             ),
@@ -97,21 +101,27 @@ class _QuestionPageState extends State<QuestionPage> {
                   margin: const EdgeInsets.only(bottom: 16),
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                                       color: isSelected 
-                       ? const Color(0xFF4CAF50).withOpacity(0.2)
-                       : const Color(0xFF0F0F0F),
-                   borderRadius: BorderRadius.circular(16),
-                   border: Border.all(
-                     color: isSelected 
-                         ? const Color(0xFF4CAF50)
-                         : Colors.grey.shade800,
+                    color: isSelected
+                        ? Theme.of(context).primaryColor.withOpacity(0.2)
+                        : isDarkMode
+                            ? const Color(0xFF0F0F0F)
+                            : Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: isSelected
+                          ? Theme.of(context).primaryColor
+                          : isDarkMode
+                              ? Colors.grey.shade800
+                              : Colors.grey.shade300,
                       width: 2,
                     ),
                     boxShadow: [
-                                           BoxShadow(
-                       color: isSelected 
-                           ? const Color(0xFF4CAF50).withOpacity(0.3)
-                           : Colors.black.withOpacity(0.2),
+                      BoxShadow(
+                        color: isSelected
+                            ? Theme.of(context).primaryColor.withOpacity(0.3)
+                            : isDarkMode
+                                ? Colors.black.withOpacity(0.2)
+                                : Colors.grey.withOpacity(0.1),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -124,13 +134,15 @@ class _QuestionPageState extends State<QuestionPage> {
                         height: 24,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                                                   color: isSelected 
-                             ? const Color(0xFF4CAF50)
-                             : Colors.transparent,
-                         border: Border.all(
-                           color: isSelected 
-                               ? const Color(0xFF4CAF50)
-                               : Colors.grey.shade600,
+                          color: isSelected
+                              ? Theme.of(context).primaryColor
+                              : Colors.transparent,
+                          border: Border.all(
+                            color: isSelected
+                                ? Theme.of(context).primaryColor
+                                : isDarkMode
+                                    ? Colors.grey.shade600
+                                    : Colors.grey.shade400,
                             width: 2,
                           ),
                         ),
@@ -148,8 +160,11 @@ class _QuestionPageState extends State<QuestionPage> {
                           option.optionText,
                           style: TextStyle(
                             fontSize: 16,
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                            color: isSelected ? Colors.white : Colors.grey.shade300,
+                            fontWeight:
+                                isSelected ? FontWeight.w600 : FontWeight.w500,
+                            color: isSelected
+                                ? Theme.of(context).textTheme.bodyLarge?.color
+                                : Theme.of(context).textTheme.bodyMedium?.color,
                           ),
                         ),
                       ),
@@ -160,20 +175,24 @@ class _QuestionPageState extends State<QuestionPage> {
             }).toList(),
 
             const SizedBox(height: 32),
-            
+
             // Help Text
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF0F0F0F),
+                color:
+                    isDarkMode ? const Color(0xFF0F0F0F) : Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade800),
+                border: Border.all(
+                    color: isDarkMode
+                        ? Colors.grey.shade800
+                        : Colors.grey.shade300),
               ),
               child: Row(
                 children: [
-                                   Icon(
-                   Icons.info_outline,
-                   color: const Color(0xFF4CAF50).withOpacity(0.7),
+                  Icon(
+                    Icons.info_outline,
+                    color: Theme.of(context).primaryColor.withOpacity(0.7),
                     size: 20,
                   ),
                   const SizedBox(width: 12),
@@ -182,7 +201,7 @@ class _QuestionPageState extends State<QuestionPage> {
                       'Select the option that best describes your investment preferences',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.grey.shade400,
+                        color: Theme.of(context).textTheme.bodySmall?.color,
                         fontStyle: FontStyle.italic,
                       ),
                     ),

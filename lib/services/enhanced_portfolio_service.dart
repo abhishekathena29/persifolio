@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/portfolio_models.dart';
 import '../services/alpha_vantage_service.dart';
+import '../services/stock_price_cache_service.dart';
 
 class EnhancedPortfolioService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -10,7 +11,9 @@ class EnhancedPortfolioService {
   static String get _userId => _auth.currentUser?.uid ?? '';
 
   /// Get user's complete portfolio with real-time price updates
-  static Future<Portfolio?> getPortfolioWithLivePrices() async {
+  /// Uses cached prices when available, fetches from API only when needed
+  static Future<Portfolio?> getPortfolioWithLivePrices(
+      {bool forceRefresh = false}) async {
     if (_userId.isEmpty) return null;
 
     try {
@@ -23,17 +26,29 @@ class EnhancedPortfolioService {
 
       final portfolio = Portfolio.fromMap(portfolioDoc.data()!);
 
-      // Update prices for all holdings
+      // Update prices for all holdings using cache
       final updatedHoldings = <StockHolding>[];
       for (final holding in portfolio.holdings) {
         try {
-          final quote = await AlphaVantageService.getStockQuote(holding.symbol);
-          updatedHoldings.add(holding.copyWith(
-            currentPrice: quote['price'],
-          ));
+          // Use cached price service
+          final quote = await StockPriceCacheService.getStockPrice(
+            holding.symbol,
+            forceRefresh: forceRefresh,
+          );
 
-          // Add small delay to avoid rate limiting
-          await Future.delayed(const Duration(milliseconds: 100));
+          if (quote != null) {
+            updatedHoldings.add(holding.copyWith(
+              currentPrice: quote['price'],
+            ));
+          } else {
+            // Keep existing holding if API fails
+            updatedHoldings.add(holding);
+          }
+
+          // Add small delay to avoid rate limiting only when fetching from API
+          if (forceRefresh) {
+            await Future.delayed(const Duration(milliseconds: 200));
+          }
         } catch (e) {
           print('Error updating price for ${holding.symbol}: $e');
           // Keep the existing holding with last known price

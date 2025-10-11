@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:persifolio/services/transaction_service.dart';
 import 'package:persifolio/services/enhanced_portfolio_service.dart';
 import 'package:persifolio/services/alpha_vantage_service.dart';
+import 'package:persifolio/services/stock_price_cache_service.dart';
 import 'package:persifolio/models/portfolio_models.dart';
 
 class TradePage extends StatefulWidget {
@@ -34,10 +35,28 @@ class _TradePageState extends State<TradePage> {
   void initState() {
     super.initState();
     _sharesController.addListener(_updateTotal);
+    _refreshStockPrice(); // Fetch latest price for trading
     if (!isBuy) {
       _loadCurrentHolding();
     } else {
       _loadingHolding = false;
+    }
+  }
+
+  // Fetch latest stock price before trading
+  Future<void> _refreshStockPrice() async {
+    try {
+      final quote = await StockPriceCacheService.getStockPrice(
+        widget.stock['symbol'],
+        forceRefresh: true,
+      );
+      if (quote != null && mounted) {
+        setState(() {
+          widget.stock['price'] = quote['price'];
+        });
+      }
+    } catch (e) {
+      print('Error refreshing price: $e');
     }
   }
 
@@ -152,12 +171,14 @@ class _TradePageState extends State<TradePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F0F),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text('$tradeAction ${widget.stock['symbol']}'),
-        backgroundColor: const Color(0xFF1A1A1A),
-        foregroundColor: Colors.white,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        foregroundColor: Theme.of(context).textTheme.bodyLarge?.color,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -179,11 +200,13 @@ class _TradePageState extends State<TradePage> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1A1A1A),
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
+                          color: isDarkMode
+                              ? Colors.black.withOpacity(0.2)
+                              : Colors.grey.withOpacity(0.1),
                           blurRadius: 10,
                           offset: const Offset(0, 2),
                         ),
@@ -206,19 +229,19 @@ class _TradePageState extends State<TradePage> {
                         const SizedBox(height: 16),
                         Text(
                           widget.stock['symbol'],
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                           ),
                         ),
                         Text(
                           widget.stock['name'] ??
                               AlphaVantageService.getStockName(
                                   widget.stock['symbol']),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
-                            color: Colors.grey,
+                            color: Theme.of(context).textTheme.bodySmall?.color,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -226,19 +249,25 @@ class _TradePageState extends State<TradePage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
+                            Text(
                               'Current Price:',
                               style: TextStyle(
                                 fontSize: 16,
-                                color: Colors.grey,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.color,
                               ),
                             ),
                             Text(
                               '₹${(widget.stock['price'] as num).toStringAsFixed(2)}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
                               ),
                             ),
                           ],
@@ -254,27 +283,32 @@ class _TradePageState extends State<TradePage> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF1A1A1A),
+                        color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             'Your Holdings',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                             ),
                           ),
                           const SizedBox(height: 12),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
+                              Text(
                                 'Available Shares:',
-                                style: TextStyle(color: Colors.grey),
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.color),
                               ),
                               Text(
                                 '${_currentHolding!.shares}',
@@ -288,14 +322,21 @@ class _TradePageState extends State<TradePage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
+                              Text(
                                 'Average Price:',
-                                style: TextStyle(color: Colors.grey),
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.color),
                               ),
                               Text(
                                 '₹${_currentHolding!.avgPrice.toStringAsFixed(2)}',
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -304,14 +345,21 @@ class _TradePageState extends State<TradePage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
+                              Text(
                                 'Total Value:',
-                                style: TextStyle(color: Colors.grey),
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.color),
                               ),
                               Text(
                                 '₹${_currentHolding!.totalValue.toStringAsFixed(2)}',
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -365,26 +413,26 @@ class _TradePageState extends State<TradePage> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1A1A1A),
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Number of Shares',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                           ),
                         ),
                         const SizedBox(height: 16),
                         TextField(
                           controller: _sharesController,
                           keyboardType: TextInputType.number,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -392,7 +440,11 @@ class _TradePageState extends State<TradePage> {
                             hintText: !isBuy && _currentHolding != null
                                 ? 'Max: ${_currentHolding!.shares}'
                                 : 'Enter quantity',
-                            hintStyle: const TextStyle(color: Colors.grey),
+                            hintStyle: TextStyle(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.color),
                             prefixIcon: const Icon(
                               Icons.shopping_cart,
                               color: Color(0xFFFF6B35),
@@ -400,7 +452,11 @@ class _TradePageState extends State<TradePage> {
                             suffixText: !isBuy && _currentHolding != null
                                 ? '/${_currentHolding!.shares}'
                                 : null,
-                            suffixStyle: const TextStyle(color: Colors.grey),
+                            suffixStyle: TextStyle(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.color),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: const BorderSide(color: Colors.grey),
@@ -480,11 +536,14 @@ class _TradePageState extends State<TradePage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
+                            Text(
                               'Total Amount:',
                               style: TextStyle(
                                 fontSize: 18,
-                                color: Colors.white,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -502,8 +561,9 @@ class _TradePageState extends State<TradePage> {
                           const SizedBox(height: 8),
                           Text(
                             '$_shares × ₹${(widget.stock['price'] as num).toStringAsFixed(2)}',
-                            style: const TextStyle(
-                              color: Colors.grey,
+                            style: TextStyle(
+                              color:
+                                  Theme.of(context).textTheme.bodySmall?.color,
                               fontSize: 14,
                             ),
                           ),

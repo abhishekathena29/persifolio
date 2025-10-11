@@ -58,23 +58,26 @@ class _AssessmentPageState extends State<AssessmentPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F0F),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Investment Assessment',
           style: TextStyle(
-            color: Colors.white,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
             fontWeight: FontWeight.bold,
           ),
         ),
       ),
       body: isLoading
-          ? const Center(
+          ? Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4CAF50)),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).primaryColor),
               ),
             )
           : Padding(
@@ -86,11 +89,13 @@ class _AssessmentPageState extends State<AssessmentPage> {
                     padding: const EdgeInsets.all(20),
                     margin: const EdgeInsets.only(bottom: 20),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1A1A1A),
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
+                          color: isDarkMode
+                              ? Colors.black.withOpacity(0.3)
+                              : Colors.grey.withOpacity(0.15),
                           blurRadius: 10,
                           offset: const Offset(0, 2),
                         ),
@@ -101,10 +106,13 @@ class _AssessmentPageState extends State<AssessmentPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
+                            Text(
                               'Assessment Progress',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -113,13 +121,15 @@ class _AssessmentPageState extends State<AssessmentPage> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 6),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF4CAF50).withOpacity(0.2),
+                                color: Theme.of(context)
+                                    .primaryColor
+                                    .withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: const Text(
+                              child: Text(
                                 'Complete',
                                 style: TextStyle(
-                                  color: Color(0xFF4CAF50),
+                                  color: Theme.of(context).primaryColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 12,
                                 ),
@@ -132,9 +142,11 @@ class _AssessmentPageState extends State<AssessmentPage> {
                           value: questionList.isEmpty
                               ? 0
                               : currentPageIndex / (questionList.length - 1),
-                          backgroundColor: Colors.grey.shade800,
-                          valueColor: const AlwaysStoppedAnimation<Color>(
-                              Color(0xFF4CAF50)),
+                          backgroundColor: isDarkMode
+                              ? Colors.grey.shade800
+                              : Colors.grey.shade300,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              Theme.of(context).primaryColor),
                           minHeight: 8,
                         ),
                       ],
@@ -170,11 +182,13 @@ class _AssessmentPageState extends State<AssessmentPage> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1A1A1A),
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
+                          color: isDarkMode
+                              ? Colors.black.withOpacity(0.3)
+                              : Colors.grey.withOpacity(0.15),
                           blurRadius: 10,
                           offset: const Offset(0, -2),
                         ),
@@ -206,7 +220,7 @@ class _AssessmentPageState extends State<AssessmentPage> {
                                           ScoringPage(score: totalScore)));
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF4CAF50),
+                              backgroundColor: Theme.of(context).primaryColor,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 32, vertical: 16),

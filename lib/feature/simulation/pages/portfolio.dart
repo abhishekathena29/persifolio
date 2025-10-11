@@ -40,11 +40,13 @@ class _PortfolioPageState extends State<PortfolioPage>
     super.dispose();
   }
 
-  Future<void> _loadPortfolio() async {
+  Future<void> _loadPortfolio({bool forceRefresh = false}) async {
     setState(() => _loading = true);
     try {
       final portfolio =
-          await EnhancedPortfolioService.getPortfolioWithLivePrices();
+          await EnhancedPortfolioService.getPortfolioWithLivePrices(
+        forceRefresh: forceRefresh,
+      );
       setState(() {
         _portfolio = portfolio;
         _loading = false;
@@ -58,19 +60,23 @@ class _PortfolioPageState extends State<PortfolioPage>
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F0F),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         leading: Container(
           margin: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: const Color(0xFF1A1A1A),
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.3),
+                color: isDarkMode
+                    ? Colors.black.withOpacity(0.3)
+                    : Colors.grey.withOpacity(0.2),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -81,10 +87,10 @@ class _PortfolioPageState extends State<PortfolioPage>
             onPressed: () => Navigator.pop(context),
           ),
         ),
-        title: const Text(
+        title: Text(
           'My Portfolio',
           style: TextStyle(
-            color: Colors.white,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -92,11 +98,13 @@ class _PortfolioPageState extends State<PortfolioPage>
           Container(
             margin: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: const Color(0xFF1A1A1A),
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: isDarkMode
+                      ? Colors.black.withOpacity(0.3)
+                      : Colors.grey.withOpacity(0.2),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -104,7 +112,7 @@ class _PortfolioPageState extends State<PortfolioPage>
             ),
             child: IconButton(
               icon: const Icon(Icons.refresh, color: Color(0xFFFF6B35)),
-              onPressed: _loadPortfolio,
+              onPressed: () => _loadPortfolio(forceRefresh: true),
             ),
           ),
         ],
@@ -134,7 +142,7 @@ class _PortfolioPageState extends State<PortfolioPage>
               child: SlideTransition(
                 position: _slideAnimation,
                 child: RefreshIndicator(
-                  onRefresh: _loadPortfolio,
+                  onRefresh: () => _loadPortfolio(forceRefresh: true),
                   color: const Color(0xFFFF6B35),
                   child: SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
@@ -165,10 +173,13 @@ class _PortfolioPageState extends State<PortfolioPage>
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text(
-                                    'Total Available Balance',
+                                  Text(
+                                    'Total Portfolio Value',
                                     style: TextStyle(
-                                      color: Colors.white70,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.color,
                                       fontSize: 16,
                                     ),
                                   ),
@@ -179,10 +190,13 @@ class _PortfolioPageState extends State<PortfolioPage>
                                       color: Colors.white.withOpacity(0.2),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
-                                    child: const Text(
+                                    child: Text(
                                       'LIVE',
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         fontSize: 10,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -193,11 +207,76 @@ class _PortfolioPageState extends State<PortfolioPage>
                               const SizedBox(height: 8),
                               Text(
                                 '₹${(_portfolio?.totalValue ?? 0.0).toStringAsFixed(2)}',
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   fontSize: 32,
                                   fontWeight: FontWeight.bold,
                                 ),
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Available Balance',
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.color
+                                              ?.withOpacity(0.8),
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      Text(
+                                        '₹${(_portfolio?.cashBalance ?? 0.0).toStringAsFixed(2)}',
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.color,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        'Invested',
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.color
+                                              ?.withOpacity(0.8),
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      Text(
+                                        '₹${((_portfolio?.totalValue ?? 0.0) - (_portfolio?.cashBalance ?? 0.0)).toStringAsFixed(2)}',
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.color,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                               const SizedBox(height: 16),
                               Row(
@@ -265,18 +344,24 @@ class _PortfolioPageState extends State<PortfolioPage>
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
+                              Text(
                                 'Holdings',
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                 ),
                               ),
                               Text(
                                 '${_portfolio?.holdings.length ?? 0} stocks',
-                                style: const TextStyle(
-                                  color: Colors.grey,
+                                style: TextStyle(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.color,
                                   fontSize: 14,
                                 ),
                               ),
@@ -292,37 +377,48 @@ class _PortfolioPageState extends State<PortfolioPage>
                             margin: const EdgeInsets.all(20),
                             padding: const EdgeInsets.all(40),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF1A1A1A),
+                              color: Theme.of(context).cardColor,
                               borderRadius: BorderRadius.circular(20),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
+                                  color: isDarkMode
+                                      ? Colors.black.withOpacity(0.2)
+                                      : Colors.grey.withOpacity(0.1),
                                   blurRadius: 10,
                                   offset: const Offset(0, 2),
                                 ),
                               ],
                             ),
-                            child: const Column(
+                            child: Column(
                               children: [
                                 Icon(
                                   Icons.inventory_2_outlined,
                                   size: 64,
-                                  color: Colors.grey,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.color,
                                 ),
-                                SizedBox(height: 16),
+                                const SizedBox(height: 16),
                                 Text(
                                   'No holdings yet',
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                   ),
                                 ),
-                                SizedBox(height: 8),
+                                const SizedBox(height: 8),
                                 Text(
                                   'Start building your portfolio by buying stocks',
                                   style: TextStyle(
-                                    color: Colors.grey,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.color,
                                     fontSize: 14,
                                   ),
                                   textAlign: TextAlign.center,
@@ -350,11 +446,13 @@ class _PortfolioPageState extends State<PortfolioPage>
                             margin: const EdgeInsets.symmetric(horizontal: 20),
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF1A1A1A),
+                              color: Theme.of(context).cardColor,
                               borderRadius: BorderRadius.circular(20),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
+                                  color: isDarkMode
+                                      ? Colors.black.withOpacity(0.2)
+                                      : Colors.grey.withOpacity(0.1),
                                   blurRadius: 10,
                                   offset: const Offset(0, 2),
                                 ),
@@ -379,12 +477,15 @@ class _PortfolioPageState extends State<PortfolioPage>
                                       ),
                                     ),
                                     const SizedBox(width: 12),
-                                    const Text(
+                                    Text(
                                       'Portfolio Performance',
                                       style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                       ),
                                     ),
                                   ],
@@ -434,16 +535,19 @@ class _PortfolioPageState extends State<PortfolioPage>
     final avgValue = holding.shares * holding.avgPrice;
     final gain = currentValue - avgValue;
     final gainPercentage = avgValue > 0 ? (gain / avgValue) * 100 : 0;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: isDarkMode
+                ? Colors.black.withOpacity(0.2)
+                : Colors.grey.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -478,17 +582,17 @@ class _PortfolioPageState extends State<PortfolioPage>
                   children: [
                     Text(
                       holding.symbol,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                     ),
                     Text(
                       holding.name,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
-                        color: Colors.grey,
+                        color: Theme.of(context).textTheme.bodySmall?.color,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -501,10 +605,10 @@ class _PortfolioPageState extends State<PortfolioPage>
                 children: [
                   Text(
                     '₹${currentValue.toStringAsFixed(2)}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
                   Container(
@@ -561,18 +665,18 @@ class _PortfolioPageState extends State<PortfolioPage>
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
-            color: Colors.grey,
+            color: Theme.of(context).textTheme.bodySmall?.color,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: Colors.white,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
           ),
         ),
       ],
@@ -594,9 +698,9 @@ class _PortfolioPageState extends State<PortfolioPage>
           Expanded(
             child: Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
-                color: Colors.grey,
+                color: Theme.of(context).textTheme.bodySmall?.color,
                 fontWeight: FontWeight.w500,
               ),
             ),

@@ -51,8 +51,10 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F0F),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: FadeTransition(
           opacity: _fadeAnimation,
@@ -69,11 +71,13 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                   Container(
                     padding: const EdgeInsets.all(32),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1A1A1A),
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(24),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
+                          color: isDarkMode
+                              ? Colors.black.withOpacity(0.3)
+                              : Colors.grey.withOpacity(0.2),
                           blurRadius: 20,
                           offset: const Offset(0, 8),
                         ),
@@ -84,30 +88,31 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                         Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF4CAF50).withOpacity(0.2),
+                            color:
+                                Theme.of(context).primaryColor.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.trending_up,
-                            color: Color(0xFF4CAF50),
+                            color: Theme.of(context).primaryColor,
                             size: 48,
                           ),
                         ),
                         const SizedBox(height: 24),
-                        const Text(
+                        Text(
                           'Persifolio',
                           style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                           ),
                         ),
                         const SizedBox(height: 8),
-                        const Text(
+                        Text(
                           'Your Personal Investment Journey',
                           style: TextStyle(
                             fontSize: 16,
-                            color: Colors.grey,
+                            color: Theme.of(context).textTheme.bodySmall?.color,
                           ),
                         ),
                       ],
@@ -120,11 +125,13 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1A1A1A),
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
+                          color: isDarkMode
+                              ? Colors.black.withOpacity(0.3)
+                              : Colors.grey.withOpacity(0.15),
                           blurRadius: 20,
                           offset: const Offset(0, 8),
                         ),
@@ -146,7 +153,7 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                                         vertical: 12),
                                     decoration: BoxDecoration(
                                       color: _isLogin
-                                          ? const Color(0xFF4CAF50)
+                                          ? Theme.of(context).primaryColor
                                           : Colors.transparent,
                                       borderRadius: BorderRadius.circular(12),
                                     ),
@@ -156,7 +163,10 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                                       style: TextStyle(
                                         color: _isLogin
                                             ? Colors.white
-                                            : Colors.grey,
+                                            : Theme.of(context)
+                                                .textTheme
+                                                .bodySmall
+                                                ?.color,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -172,7 +182,7 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                                         vertical: 12),
                                     decoration: BoxDecoration(
                                       color: !_isLogin
-                                          ? const Color(0xFF4CAF50)
+                                          ? Theme.of(context).primaryColor
                                           : Colors.transparent,
                                       borderRadius: BorderRadius.circular(12),
                                     ),
@@ -182,7 +192,10 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                                       style: TextStyle(
                                         color: !_isLogin
                                             ? Colors.white
-                                            : Colors.grey,
+                                            : Theme.of(context)
+                                                .textTheme
+                                                .bodySmall
+                                                ?.color,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -198,12 +211,20 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                           if (!_isLogin) ...[
                             TextFormField(
                               controller: _nameController,
-                              style: const TextStyle(color: Colors.white),
+                              style: TextStyle(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color),
                               decoration: InputDecoration(
                                 labelText: 'Full Name',
-                                labelStyle: const TextStyle(color: Colors.grey),
-                                prefixIcon: const Icon(Icons.person,
-                                    color: Color(0xFF4CAF50)),
+                                labelStyle: TextStyle(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.color),
+                                prefixIcon: Icon(Icons.person,
+                                    color: Theme.of(context).primaryColor),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide:
@@ -211,11 +232,14 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(
-                                      color: Color(0xFF4CAF50), width: 2),
+                                  borderSide: BorderSide(
+                                      color: Theme.of(context).primaryColor,
+                                      width: 2),
                                 ),
                                 filled: true,
-                                fillColor: const Color(0xFF2A2A2A),
+                                fillColor: isDarkMode
+                                    ? const Color(0xFF2A2A2A)
+                                    : Colors.grey.shade100,
                               ),
                               validator: (value) {
                                 if (!_isLogin &&
@@ -231,13 +255,21 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                           // Email field
                           TextFormField(
                             controller: _emailController,
-                            style: const TextStyle(color: Colors.white),
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color),
                             keyboardType: TextInputType.emailAddress,
                             decoration: InputDecoration(
                               labelText: 'Email',
-                              labelStyle: const TextStyle(color: Colors.grey),
-                              prefixIcon: const Icon(Icons.email,
-                                  color: Color(0xFF4CAF50)),
+                              labelStyle: TextStyle(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.color),
+                              prefixIcon: Icon(Icons.email,
+                                  color: Theme.of(context).primaryColor),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide:
@@ -245,11 +277,14 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                    color: Color(0xFF4CAF50), width: 2),
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).primaryColor,
+                                    width: 2),
                               ),
                               filled: true,
-                              fillColor: const Color(0xFF2A2A2A),
+                              fillColor: isDarkMode
+                                  ? const Color(0xFF2A2A2A)
+                                  : Colors.grey.shade100,
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -268,19 +303,30 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                           // Password field
                           TextFormField(
                             controller: _passwordController,
-                            style: const TextStyle(color: Colors.white),
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color),
                             obscureText: _obscurePassword,
                             decoration: InputDecoration(
                               labelText: 'Password',
-                              labelStyle: const TextStyle(color: Colors.grey),
-                              prefixIcon: const Icon(Icons.lock,
-                                  color: Color(0xFF4CAF50)),
+                              labelStyle: TextStyle(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.color),
+                              prefixIcon: Icon(Icons.lock,
+                                  color: Theme.of(context).primaryColor),
                               suffixIcon: IconButton(
                                 icon: Icon(
                                   _obscurePassword
                                       ? Icons.visibility
                                       : Icons.visibility_off,
-                                  color: Colors.grey,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.color,
                                 ),
                                 onPressed: () => setState(
                                     () => _obscurePassword = !_obscurePassword),
@@ -292,11 +338,14 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                    color: Color(0xFF4CAF50), width: 2),
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).primaryColor,
+                                    width: 2),
                               ),
                               filled: true,
-                              fillColor: const Color(0xFF2A2A2A),
+                              fillColor: isDarkMode
+                                  ? const Color(0xFF2A2A2A)
+                                  : Colors.grey.shade100,
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -401,20 +450,6 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                               ),
                             ),
                           ),
-
-                          const SizedBox(height: 16),
-
-                          // Skip Login Button
-                          TextButton(
-                            onPressed: _skipLogin,
-                            child: const Text(
-                              'Skip and Continue as Guest',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
                         ],
                       ),
                     ),
@@ -475,19 +510,17 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
     }
   }
 
-  void _skipLogin() {
-    _navigateToHome();
-  }
-
   void _navigateToHome() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const BottomNavigationPage(
-          initialIndex: 0, // Start with Home/Simulation tab
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const BottomNavigationPage(
+            initialIndex: 0, // Start with Home/Simulation tab
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   void _showError(String message) {

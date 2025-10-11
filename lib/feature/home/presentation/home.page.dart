@@ -59,9 +59,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   void _loadPortfolioData() async {
-    setState(() {
-      isLoadingPortfolio = true;
-    });
+    if (mounted) {
+      setState(() {
+        isLoadingPortfolio = true;
+      });
+    }
 
     try {
       // First try to get portfolio companies from Firebase
@@ -101,10 +103,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       // // Fallback to hardcoded data
       // _loadFallbackPortfolioData();
     }
-
-    setState(() {
-      isLoadingPortfolio = false;
-    });
+    if (mounted) {
+      setState(() {
+        isLoadingPortfolio = false;
+      });
+    }
   }
 
   // void _loadFallbackPortfolioData() {
@@ -330,16 +333,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F0F),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         centerTitle: false,
-        title: const Text(
+        title: Text(
           'Portfolio',
           style: TextStyle(
-            color: Colors.white,
+            fontSize: 24,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -347,11 +353,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           Container(
             margin: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: const Color(0xFF1A1A1A),
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: isDarkMode
+                      ? Colors.black.withOpacity(0.3)
+                      : Colors.grey.withOpacity(0.15),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -364,30 +372,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               },
             ),
           ),
-          Container(
-            margin: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1A1A1A),
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: IconButton(
-              icon: const Icon(Icons.trending_up, color: Color(0xFF4CAF50)),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const SimulationHomePage()),
-                );
-              },
-            ),
-          ),
         ],
       ),
       body: FadeTransition(
@@ -395,18 +379,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         child: SlideTransition(
           position: _slideAnimation,
           child: isLoadingPortfolio
-              ? const Center(
+              ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CircularProgressIndicator(
-                        color: Color(0xFF4CAF50),
+                        color: Theme.of(context).primaryColor,
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       Text(
                         'Loading your portfolio...',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontSize: 16,
                         ),
                       ),
@@ -422,18 +406,29 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       Container(
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
+                          gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: [
-                              Color(0xFF1A1A1A),
-                              Color(0xFF2A2A2A),
-                            ],
+                            colors: isDarkMode
+                                ? [
+                                    const Color(0xFF1A1A1A),
+                                    const Color(0xFF2A2A2A),
+                                  ]
+                                : [
+                                    Theme.of(context)
+                                        .primaryColor
+                                        .withOpacity(0.05),
+                                    Theme.of(context)
+                                        .primaryColor
+                                        .withOpacity(0.1),
+                                  ],
                           ),
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
+                              color: isDarkMode
+                                  ? Colors.black.withOpacity(0.3)
+                                  : Colors.grey.withOpacity(0.15),
                               blurRadius: 20,
                               offset: const Offset(0, 8),
                             ),
@@ -444,10 +439,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
+                                Text(
                                   'Portfolio Value',
                                   style: TextStyle(
-                                    color: Colors.grey,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.color,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -456,14 +454,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 12, vertical: 6),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF4CAF50)
+                                    color: Theme.of(context)
+                                        .primaryColor
                                         .withOpacity(0.2),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  child: const Text(
+                                  child: Text(
                                     'ASSIGNED',
                                     style: TextStyle(
-                                      color: Color(0xFF4CAF50),
+                                      color: Theme.of(context).primaryColor,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 12,
                                     ),
@@ -474,10 +473,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             const SizedBox(height: 12),
                             Text(
                               '₹${totalValue.toStringAsFixed(0)}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 32,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
                               ),
                             ),
                           ],
@@ -492,7 +494,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           padding: const EdgeInsets.all(20),
                           margin: const EdgeInsets.only(bottom: 24),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF1A1A1A),
+                            color: Theme.of(context).cardColor,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                                 color:
@@ -531,7 +533,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                       '${portfolioCompanies.length} companies across ${sectors.length} sectors',
                                       style: TextStyle(
                                         fontSize: 14,
-                                        color: Colors.grey.shade300,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.color,
                                       ),
                                     ),
                                   ],
@@ -545,11 +550,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       Container(
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF1A1A1A),
+                          color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
+                              color: isDarkMode
+                                  ? Colors.black.withOpacity(0.3)
+                                  : Colors.grey.withOpacity(0.15),
                               blurRadius: 20,
                               offset: const Offset(0, 8),
                             ),
@@ -573,12 +580,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   ),
                                 ),
                                 const SizedBox(width: 12),
-                                const Text(
+                                Text(
                                   'Portfolio Allocation',
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                   ),
                                 ),
                               ],
@@ -592,21 +602,29 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 painter: DonutChartPainter(
                                   sectors: sectors,
                                   colors: pieColors,
-                                  backgroundColor: const Color(0xFF0F0F0F),
+                                  backgroundColor:
+                                      Theme.of(context).scaffoldBackgroundColor,
                                 ),
                                 child: Center(
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      const Text(
+                                      Text(
                                         'Allocation',
                                         style: TextStyle(
-                                            color: Colors.grey, fontSize: 12),
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall
+                                                ?.color,
+                                            fontSize: 12),
                                       ),
                                       Text(
                                         '${sectors.fold<double>(0, (p, e) => p + (e['percentage'] as num).toDouble()).toStringAsFixed(0)}%',
-                                        style: const TextStyle(
-                                          color: Colors.white,
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.color,
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -649,7 +667,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF4CAF50),
+                            backgroundColor: Theme.of(context).primaryColor,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 20),
                             shape: RoundedRectangleBorder(
@@ -666,9 +684,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   color: Colors.white.withOpacity(0.2),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: const Icon(
+                                child: Icon(
                                   Icons.trending_up,
-                                  color: Colors.white,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   size: 24,
                                 ),
                               ),
@@ -691,11 +712,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       Container(
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF1A1A1A),
+                          color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
+                              color: isDarkMode
+                                  ? Colors.black.withOpacity(0.3)
+                                  : Colors.grey.withOpacity(0.15),
                               blurRadius: 20,
                               offset: const Offset(0, 8),
                             ),
@@ -720,12 +743,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   ),
                                 ),
                                 const SizedBox(width: 12),
-                                const Text(
+                                Text(
                                   'Allocation Breakdown',
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                   ),
                                 ),
                               ],
@@ -752,10 +778,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 return Container(
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF0F0F0F),
+                                    color: isDarkMode
+                                        ? const Color(0xFF0F0F0F)
+                                        : const Color(0xFFF8F8F8),
                                     borderRadius: BorderRadius.circular(12),
-                                    border:
-                                        Border.all(color: Colors.grey.shade800),
+                                    border: Border.all(
+                                        color: isDarkMode
+                                            ? Colors.grey.shade800
+                                            : Colors.grey.shade300),
                                   ),
                                   child: Row(
                                     crossAxisAlignment:
@@ -780,10 +810,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                           children: [
                                             Text(
                                               sector['name'],
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
-                                                color: Colors.white,
+                                                color: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyLarge
+                                                    ?.color,
                                               ),
                                             ),
                                             const SizedBox(height: 6),
@@ -803,8 +836,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                           const EdgeInsets.all(
                                                               12),
                                                       decoration: BoxDecoration(
-                                                        color: const Color(
-                                                            0xFF2A2A2A),
+                                                        color: isDarkMode
+                                                            ? const Color(
+                                                                0xFF2A2A2A)
+                                                            : Colors.white,
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(8),
@@ -828,14 +863,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                                   company
                                                                       .companyName,
                                                                   style:
-                                                                      const TextStyle(
+                                                                      TextStyle(
                                                                     fontSize:
                                                                         14,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
-                                                                    color: Colors
-                                                                        .white,
+                                                                    color: Theme.of(
+                                                                            context)
+                                                                        .textTheme
+                                                                        .bodyLarge
+                                                                        ?.color,
                                                                   ),
                                                                 ),
                                                               ),
@@ -877,8 +915,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                           Text(
                                                             company.where,
                                                             style: TextStyle(
-                                                              color: Colors.grey
-                                                                  .shade400,
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodySmall
+                                                                  ?.color,
                                                               fontSize: 12,
                                                             ),
                                                           ),
@@ -889,9 +930,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                             Text(
                                                               company.about,
                                                               style: TextStyle(
-                                                                color: Colors
-                                                                    .grey
-                                                                    .shade300,
+                                                                color: Theme.of(
+                                                                        context)
+                                                                    .textTheme
+                                                                    .bodySmall
+                                                                    ?.color,
                                                                 fontSize: 11,
                                                               ),
                                                               maxLines: 2,
@@ -917,20 +960,28 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                           horizontal: 10,
                                                           vertical: 6),
                                                       decoration: BoxDecoration(
-                                                        color: const Color(
-                                                            0xFF1A1A1A),
+                                                        color: isDarkMode
+                                                            ? const Color(
+                                                                0xFF1A1A1A)
+                                                            : Colors.white,
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(20),
                                                         border: Border.all(
-                                                            color: Colors
-                                                                .grey.shade800),
+                                                            color: isDarkMode
+                                                                ? Colors.grey
+                                                                    .shade800
+                                                                : Colors.grey
+                                                                    .shade300),
                                                       ),
                                                       child: Text(
                                                         item.toString(),
                                                         style: TextStyle(
-                                                            color: Colors
-                                                                .grey.shade300,
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .bodySmall
+                                                                ?.color,
                                                             fontSize: 12),
                                                       ),
                                                     ),
@@ -946,17 +997,23 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                         children: [
                                           Text(
                                             '${percent.toStringAsFixed(0)}%',
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.white,
+                                              color: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.color,
                                             ),
                                           ),
                                           Text(
                                             '₹${amount.toStringAsFixed(0)}',
                                             style: TextStyle(
                                               fontSize: 14,
-                                              color: Colors.grey.shade400,
+                                              color: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall
+                                                  ?.color,
                                             ),
                                           ),
                                         ],
@@ -980,38 +1037,45 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void _showAmountDialog() {
     final controller =
         TextEditingController(text: totalValue.toStringAsFixed(0));
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: Theme.of(context).cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text(
+        title: Text(
           'Enter Investment Amount',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
         ),
         content: TextField(
           controller: controller,
           keyboardType: TextInputType.number,
-          style: const TextStyle(color: Colors.white),
+          style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
           decoration: InputDecoration(
             hintText: 'Amount in INR',
-            hintStyle: TextStyle(color: Colors.grey.shade500),
+            hintStyle:
+                TextStyle(color: Theme.of(context).textTheme.bodySmall?.color),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey.shade800),
+              borderSide: BorderSide(
+                  color:
+                      isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: Color(0xFF4CAF50), width: 2),
             ),
-            prefixIcon: const Icon(Icons.currency_rupee, color: Colors.grey),
+            prefixIcon: Icon(Icons.currency_rupee,
+                color: Theme.of(context).textTheme.bodySmall?.color),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+            child: Text('Cancel',
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.bodySmall?.color)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -1049,7 +1113,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ),
         const SizedBox(width: 6),
         Text(label,
-            style: TextStyle(color: Colors.grey.shade300, fontSize: 12)),
+            style: TextStyle(
+                color: Theme.of(context).textTheme.bodySmall?.color,
+                fontSize: 12)),
       ],
     );
   }

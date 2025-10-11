@@ -42,10 +42,12 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
       body: pages.elementAt(_currentIndex),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF1A1A1A),
+          color: Theme.of(context).bottomNavigationBarTheme.backgroundColor,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.black.withOpacity(0.1)
+                  : Colors.grey.withOpacity(0.1),
               blurRadius: 10,
               offset: const Offset(0, -2),
             ),
@@ -91,6 +93,10 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
     required int index,
   }) {
     final isSelected = _currentIndex == index;
+    final primaryColor = Theme.of(context).primaryColor;
+    final inactiveColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.grey.shade600
+        : Colors.grey.shade500;
 
     return GestureDetector(
       onTap: () => setState(() {
@@ -99,9 +105,8 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected
-              ? const Color(0xFF4CAF50).withOpacity(0.2)
-              : Colors.transparent,
+          color:
+              isSelected ? primaryColor.withOpacity(0.2) : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -109,8 +114,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
           children: [
             Icon(
               icon,
-              color:
-                  isSelected ? const Color(0xFF4CAF50) : Colors.grey.shade600,
+              color: isSelected ? primaryColor : inactiveColor,
               size: 24,
             ),
             const SizedBox(height: 4),
@@ -119,8 +123,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                color:
-                    isSelected ? const Color(0xFF4CAF50) : Colors.grey.shade600,
+                color: isSelected ? primaryColor : inactiveColor,
               ),
             ),
           ],
