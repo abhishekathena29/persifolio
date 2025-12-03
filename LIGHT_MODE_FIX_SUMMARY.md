@@ -91,6 +91,16 @@ Fixed multiple hardcoded dark colors that didn't adapt to light mode:
   - Text color: Changed from hardcoded `Colors.white` to theme's `bodyLarge` color
   - Visibility icon: Changed from hardcoded `Colors.grey` to theme's `bodySmall` color
 
+- **Divider Section** (Lines 399-425):
+  - Divider color: Now adapts to theme (grey.shade600 dark, grey.shade400 light)
+  - "OR" text: Now uses theme's `bodySmall` color
+
+- **Google Sign In Button** (Lines 429-472):
+  - Foreground color: Changed from hardcoded `Colors.white` to theme's `bodyLarge` color
+  - Border color: Now adapts to theme with better visibility (1.5px width)
+  - Icon fallback color: Changed from hardcoded `Colors.white` to theme's `bodyLarge` color
+  - **This was causing the button to be invisible in Light Mode**
+
 ### 6. Theme Extensions (`lib/utils/theme_extensions.dart`)
 Enhanced with additional helper methods:
 - `surfaceColor`: Access to surface color from ColorScheme

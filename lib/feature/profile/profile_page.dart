@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:persifolio/services/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:persifolio/feature/auth/presentation/login.page.dart';
 import 'package:persifolio/services/theme_provider.dart';
@@ -416,13 +417,17 @@ class ProfilePage extends StatelessWidget {
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              // Navigate back to login page
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => const Loginpage()),
-                (route) => false,
-              );
+            onPressed: () async {
+              await AuthService.signOut();
+
+              if (context.mounted) {
+                Navigator.of(context).pop();
+                // Navigate back to login page
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const Loginpage()),
+                  (route) => false,
+                );
+              }
             },
             child: const Text('Logout'),
           ),

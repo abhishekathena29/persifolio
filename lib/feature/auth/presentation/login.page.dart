@@ -400,17 +400,27 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                           Row(
                             children: [
                               Expanded(
-                                  child: Divider(color: Colors.grey.shade600)),
+                                  child: Divider(
+                                      color: isDarkMode
+                                          ? Colors.grey.shade600
+                                          : Colors.grey.shade400)),
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 16),
                                 child: Text(
                                   'OR',
-                                  style: TextStyle(color: Colors.grey.shade400),
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.color),
                                 ),
                               ),
                               Expanded(
-                                  child: Divider(color: Colors.grey.shade600)),
+                                  child: Divider(
+                                      color: isDarkMode
+                                          ? Colors.grey.shade600
+                                          : Colors.grey.shade400)),
                             ],
                           ),
 
@@ -423,8 +433,15 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                               onPressed:
                                   _isLoading ? null : _handleGoogleSignIn,
                               style: OutlinedButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                side: const BorderSide(color: Colors.grey),
+                                foregroundColor: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
+                                side: BorderSide(
+                                    color: isDarkMode
+                                        ? Colors.grey.shade600
+                                        : Colors.grey.shade400,
+                                    width: 1.5),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
                                 ),
@@ -436,8 +453,11 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                                   height: 20,
                                   width: 20,
                                   errorBuilder: (context, error, stackTrace) {
-                                    return const Icon(Icons.g_mobiledata,
-                                        color: Colors.white);
+                                    return Icon(Icons.g_mobiledata,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color);
                                   },
                                 ),
                               ),

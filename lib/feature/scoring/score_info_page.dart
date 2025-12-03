@@ -4,7 +4,8 @@ class InvestorScoreInfoScreen extends StatefulWidget {
   const InvestorScoreInfoScreen({super.key});
 
   @override
-  State<InvestorScoreInfoScreen> createState() => _InvestorScoreInfoScreenState();
+  State<InvestorScoreInfoScreen> createState() =>
+      _InvestorScoreInfoScreenState();
 }
 
 class _InvestorScoreInfoScreenState extends State<InvestorScoreInfoScreen>
@@ -23,7 +24,8 @@ class _InvestorScoreInfoScreenState extends State<InvestorScoreInfoScreen>
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
-    _slideAnimation = Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
     );
     _animationController.forward();
@@ -187,7 +189,6 @@ class _InvestorScoreInfoScreenState extends State<InvestorScoreInfoScreen>
                         ),
                       ),
                       const SizedBox(height: 20),
-                      
                       _buildCalculationStep(
                         icon: Icons.schedule,
                         title: 'Time Horizon',
@@ -265,7 +266,8 @@ class _InvestorScoreInfoScreenState extends State<InvestorScoreInfoScreen>
                         decoration: BoxDecoration(
                           color: const Color(0xFF0F0F0F),
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: const Color(0xFF4CAF50).withOpacity(0.3)),
+                          border: Border.all(
+                              color: const Color(0xFF4CAF50).withOpacity(0.3)),
                         ),
                         child: Column(
                           children: [
@@ -278,7 +280,7 @@ class _InvestorScoreInfoScreenState extends State<InvestorScoreInfoScreen>
                               ),
                             ),
                             const SizedBox(height: 12),
-                            Row(
+                            Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 _buildFormulaPart('Time Horizon', '×1'),
@@ -366,12 +368,18 @@ class _InvestorScoreInfoScreenState extends State<InvestorScoreInfoScreen>
                         ),
                       ),
                       const SizedBox(height: 20),
-                      
-                      _buildScoreRange('34-57', 'Income with Capital Preservation', 'Lowest risk, capital preservation focus'),
-                      _buildScoreRange('58-83', 'Income with Moderate Growth', 'Low risk, some growth potential'),
-                      _buildScoreRange('84-99', 'Growth with Income', 'Balanced growth and income'),
-                      _buildScoreRange('100-114', 'Growth', 'Growth-focused with moderate risk'),
-                      _buildScoreRange('115-125', 'Aggressive Growth', 'Highest risk, maximum growth potential'),
+                      _buildScoreRange(
+                          '34-57',
+                          'Income with Capital Preservation',
+                          'Lowest risk, capital preservation focus'),
+                      _buildScoreRange('58-83', 'Income with Moderate Growth',
+                          'Low risk, some growth potential'),
+                      _buildScoreRange('84-99', 'Growth with Income',
+                          'Balanced growth and income'),
+                      _buildScoreRange('100-114', 'Growth',
+                          'Growth-focused with moderate risk'),
+                      _buildScoreRange('115-125', 'Aggressive Growth',
+                          'Highest risk, maximum growth potential'),
                     ],
                   ),
                 ),
@@ -384,7 +392,8 @@ class _InvestorScoreInfoScreenState extends State<InvestorScoreInfoScreen>
                   decoration: BoxDecoration(
                     color: const Color(0xFF1A1A1A).withOpacity(0.5),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0xFF4CAF50).withOpacity(0.3)),
+                    border: Border.all(
+                        color: const Color(0xFF4CAF50).withOpacity(0.3)),
                   ),
                   child: Row(
                     children: [
@@ -489,7 +498,7 @@ class _InvestorScoreInfoScreenState extends State<InvestorScoreInfoScreen>
   }
 
   Widget _buildFormulaPart(String label, String multiplier) {
-    return Column(
+    return Row(
       children: [
         Text(
           label,
@@ -498,7 +507,7 @@ class _InvestorScoreInfoScreenState extends State<InvestorScoreInfoScreen>
             color: Colors.grey,
           ),
         ),
-        const SizedBox(height: 4),
+        const Spacer(),
         Text(
           multiplier,
           style: const TextStyle(
