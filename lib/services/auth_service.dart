@@ -4,8 +4,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
-  static final GoogleSignIn _googleSignIn = GoogleSignIn();
+  static final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  static bool _googleSignInInitialized = false;
+
+  // google_sign_in v7+ requires initialize() to be awaited exactly once
+  // before any other method on the singleton instance is called.
+  static Future<void> _ensureGoogleSignInInitialized() async {
+    if (_googleSignInInitialized) return;
+    await _googleSignIn.initialize(
+        clientId:
+            "104706679185-ro8kbu1t00lvt0roh5i2u1js4f7ltab7.apps.googleusercontent.com",
+        serverClientId:
+            "104706679185-ro8kbu1t00lvt0roh5i2u1js4f7ltab7.apps.googleusercontent.com");
+    _googleSignInInitialized = true;
+  }
 
   // Get current user
   static User? get currentUser => _auth.currentUser;
@@ -68,20 +81,22 @@ class AuthService {
   // Sign in with Google
   static Future<AuthResult> signInWithGoogle() async {
     try {
-      // Trigger the authentication flow
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      await _ensureGoogleSignInInitialized();
 
-      if (googleUser == null) {
-        return AuthResult.failure('Google sign-in cancelled');
-      }
+      // Trigger the authentication flow. Unlike pre-7.x, this throws a
+      // GoogleSignInException (instead of returning null) when the user
+      // cancels or the flow fails.
+      final GoogleSignInAccount googleUser = await _googleSignIn.authenticate();
 
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      // Authentication only exposes an idToken now; access tokens are
+      // obtained separately via the authorization client if ever needed.
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+      final authClient = _googleSignIn.authorizationClient;
+      final authorization = await authClient.authorizationForScopes(['email']);
 
       // Create a new credential
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
+        accessToken: authorization?.accessToken,
         idToken: googleAuth.idToken,
       );
 
@@ -95,6 +110,12 @@ class AuthService {
       }
 
       return AuthResult.failure('Google sign-in failed');
+    } on GoogleSignInException catch (e) {
+      if (e.code == GoogleSignInExceptionCode.canceled) {
+        return AuthResult.failure('Google sign-in cancelled');
+      }
+      return AuthResult.failure(
+          'Google sign-in error: ${e.description ?? e.code}');
     } catch (e) {
       return AuthResult.failure('Google sign-in error: ${e.toString()}');
     }

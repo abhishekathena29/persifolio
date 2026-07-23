@@ -150,13 +150,56 @@ class ProfilePage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          _buildInfoRow('Portfolio Type', portfolioType),
-                          _buildInfoRow('Account Status', 'Active'),
-                          _buildInfoRow(
-                              'Member Since',
-                              DateFormat('MMM dd, yyyy')
-                                  .format(createdAt.toDate())),
-                          _buildInfoRow('Risk Profile', 'Moderate'),
+                          IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Expanded(
+                                  child: _buildInfoTile(
+                                    context: context,
+                                    icon: Icons.pie_chart_outline,
+                                    label: 'Portfolio Type',
+                                    value: portfolioType,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _buildInfoTile(
+                                    context: context,
+                                    icon: Icons.check_circle_outline,
+                                    label: 'Account Status',
+                                    value: 'Active',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Expanded(
+                                  child: _buildInfoTile(
+                                    context: context,
+                                    icon: Icons.calendar_today_outlined,
+                                    label: 'Member Since',
+                                    value: DateFormat('MMM dd, yyyy')
+                                        .format(createdAt.toDate()),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _buildInfoTile(
+                                    context: context,
+                                    icon: Icons.shield_outlined,
+                                    label: 'Risk Profile',
+                                    value: 'Moderate',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -308,33 +351,63 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
-    return Builder(
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget _buildInfoTile({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: isDarkMode ? const Color(0xFF0F0F0F) : const Color(0xFFF8F8F8),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Theme.of(context).textTheme.bodySmall?.color,
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFF6B35).withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(8),
                 ),
+                child: Icon(icon, color: const Color(0xFFFF6B35), size: 16),
               ),
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).textTheme.bodyLarge?.color,
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).textTheme.bodySmall?.color,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-        );
-      },
+          const SizedBox(height: 10),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+            ),
+            softWrap: true,
+          ),
+        ],
+      ),
     );
   }
 

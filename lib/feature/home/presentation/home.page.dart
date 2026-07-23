@@ -775,251 +775,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 final List<FirebasePortfolio> companies =
                                     List<FirebasePortfolio>.from(
                                         sector['companies'] ?? []);
-                                return Container(
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    color: isDarkMode
-                                        ? const Color(0xFF0F0F0F)
-                                        : const Color(0xFFF8F8F8),
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                        color: isDarkMode
-                                            ? Colors.grey.shade800
-                                            : Colors.grey.shade300),
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        width: 40,
-                                        height: 40,
-                                        decoration: BoxDecoration(
-                                          color: color.withOpacity(0.2),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        child: Icon(Icons.circle,
-                                            color: color, size: 16),
-                                      ),
-                                      const SizedBox(width: 16),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              sector['name'],
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                                color: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyLarge
-                                                    ?.color,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 6),
-                                            // Show companies if available from Firebase, otherwise show instruments
-                                            if (companies.isNotEmpty) ...[
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  for (final company
-                                                      in companies)
-                                                    Container(
-                                                      margin:
-                                                          const EdgeInsets.only(
-                                                              bottom: 8),
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              12),
-                                                      decoration: BoxDecoration(
-                                                        color: isDarkMode
-                                                            ? const Color(
-                                                                0xFF2A2A2A)
-                                                            : Colors.white,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                        border: Border.all(
-                                                            color: color
-                                                                .withOpacity(
-                                                                    0.3)),
-                                                      ),
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            children: [
-                                                              Expanded(
-                                                                child: Text(
-                                                                  company
-                                                                      .companyName,
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        14,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color: Theme.of(
-                                                                            context)
-                                                                        .textTheme
-                                                                        .bodyLarge
-                                                                        ?.color,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              Container(
-                                                                padding: const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        8,
-                                                                    vertical:
-                                                                        4),
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: color
-                                                                      .withOpacity(
-                                                                          0.2),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              12),
-                                                                ),
-                                                                child: Text(
-                                                                  '${company.diversification.toStringAsFixed(1)}%',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color:
-                                                                        color,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        12,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                              height: 4),
-                                                          Text(
-                                                            company.where,
-                                                            style: TextStyle(
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .textTheme
-                                                                  .bodySmall
-                                                                  ?.color,
-                                                              fontSize: 12,
-                                                            ),
-                                                          ),
-                                                          if (company.about
-                                                              .isNotEmpty) ...[
-                                                            const SizedBox(
-                                                                height: 4),
-                                                            Text(
-                                                              company.about,
-                                                              style: TextStyle(
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .textTheme
-                                                                    .bodySmall
-                                                                    ?.color,
-                                                                fontSize: 11,
-                                                              ),
-                                                              maxLines: 2,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                            ),
-                                                          ],
-                                                        ],
-                                                      ),
-                                                    ),
-                                                ],
-                                              ),
-                                            ] else ...[
-                                              Wrap(
-                                                spacing: 8,
-                                                runSpacing: 8,
-                                                children: [
-                                                  for (final item in whereList)
-                                                    Container(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 10,
-                                                          vertical: 6),
-                                                      decoration: BoxDecoration(
-                                                        color: isDarkMode
-                                                            ? const Color(
-                                                                0xFF1A1A1A)
-                                                            : Colors.white,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(20),
-                                                        border: Border.all(
-                                                            color: isDarkMode
-                                                                ? Colors.grey
-                                                                    .shade800
-                                                                : Colors.grey
-                                                                    .shade300),
-                                                      ),
-                                                      child: Text(
-                                                        item.toString(),
-                                                        style: TextStyle(
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .bodySmall
-                                                                ?.color,
-                                                            fontSize: 12),
-                                                      ),
-                                                    ),
-                                                ],
-                                              ),
-                                            ],
-                                          ],
-                                        ),
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            '${percent.toStringAsFixed(0)}%',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyLarge
-                                                  ?.color,
-                                            ),
-                                          ),
-                                          Text(
-                                            '₹${amount.toStringAsFixed(0)}',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall
-                                                  ?.color,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                return _buildSectorCard(
+                                  context: context,
+                                  isDarkMode: isDarkMode,
+                                  color: color,
+                                  name: sector['name'],
+                                  percent: percent,
+                                  amount: amount,
+                                  whereList: whereList,
+                                  companies: companies,
                                 );
                               },
                             ),
@@ -1097,6 +861,236 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             child: const Text('Apply'),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSectorCard({
+    required BuildContext context,
+    required bool isDarkMode,
+    required Color color,
+    required String name,
+    required double percent,
+    required double amount,
+    required List whereList,
+    required List<FirebasePortfolio> companies,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color:
+            isDarkMode ? const Color(0xFF0F0F0F) : const Color(0xFFF8F8F8),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+            color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header: color dot + sector name + percentage pill
+          Row(
+            children: [
+              Container(
+                width: 10,
+                height: 10,
+                decoration:
+                    BoxDecoration(color: color, shape: BoxShape.circle),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  name,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  '${percent.toStringAsFixed(0)}%',
+                  style: TextStyle(
+                    color: color,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Visual allocation bar
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: LinearProgressIndicator(
+              value: (percent / 100).clamp(0.0, 1.0),
+              minHeight: 6,
+              backgroundColor: color.withOpacity(0.12),
+              valueColor: AlwaysStoppedAnimation<Color>(color),
+            ),
+          ),
+          const SizedBox(height: 10),
+
+          // Invested amount
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Invested Amount',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(context).textTheme.bodySmall?.color,
+                ),
+              ),
+              Text(
+                '₹${amount.toStringAsFixed(0)}',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                ),
+              ),
+            ],
+          ),
+
+          // Holdings / instruments section
+          if (companies.isNotEmpty || whereList.isNotEmpty) ...[
+            const SizedBox(height: 14),
+            Divider(
+              height: 1,
+              color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+            ),
+            const SizedBox(height: 14),
+            Text(
+              companies.isNotEmpty ? 'HOLDINGS' : 'INSTRUMENTS',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.6,
+                color: Theme.of(context).textTheme.bodySmall?.color,
+              ),
+            ),
+            const SizedBox(height: 10),
+            if (companies.isNotEmpty)
+              Column(
+                children: [
+                  for (final company in companies)
+                    _buildCompanyTile(context, isDarkMode, color, company),
+                ],
+              )
+            else
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final item in whereList)
+                    _buildInstrumentChip(
+                        context, isDarkMode, item.toString()),
+                ],
+              ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCompanyTile(BuildContext context, bool isDarkMode, Color color,
+      FirebasePortfolio company) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isDarkMode ? const Color(0xFF2A2A2A) : Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  company.companyName,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${company.diversification.toStringAsFixed(1)}%',
+                  style: TextStyle(
+                    color: color,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            company.where,
+            style: TextStyle(
+              color: Theme.of(context).textTheme.bodySmall?.color,
+              fontSize: 12,
+            ),
+          ),
+          if (company.about.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text(
+              company.about,
+              style: TextStyle(
+                color: Theme.of(context).textTheme.bodySmall?.color,
+                fontSize: 11,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInstrumentChip(
+      BuildContext context, bool isDarkMode, String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: isDarkMode ? const Color(0xFF1A1A1A) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+            color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: Theme.of(context).textTheme.bodySmall?.color,
+          fontSize: 12,
+        ),
       ),
     );
   }
